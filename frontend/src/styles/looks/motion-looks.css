@@ -1,0 +1,117 @@
+/* ===== 各风格自己的动效性格 =====
+   motion.css 定了共用的做法（按钮回弹、栏目切换浮上来、面板入场）；这里按风格换成各自的动作，全部来自真实世界的东西：
+   科技=编辑器换文件（横移一下就停）；雾蓝=雾散开（慢、柔）；森林=叶子从下往上长；暖棕=翻一页书；可爱=果冻弹一下；
+   休闲=贴纸贴上去（带一点歪）；阳光=光亮起来；治愈=水面浮起（慢）；水墨=墨渗进纸；复古=打字机进纸（一格一格）；极简=直接出现，只走 2px。
+   列表行依次入场（前 8 行错开，之后不再等），侧栏当前项的标记按风格换出场方式，确认小窗（framer-motion 已经管它的入场）只给水墨加一笔朱红。
+   只动 transform / opacity；入场都很短，不会挡住点击（透明度和位移不影响命中）。整份只在没有开“减少动态效果”时生效。 */
+@media (prefers-reduced-motion: no-preference) {
+  /* ---------- 切换栏目 ---------- */
+  :root[data-look="tech"] .retained-view:not([hidden]) { animation: mt-tech-view 0.24s cubic-bezier(.2,.8,.2,1) both; }
+  :root[data-look="mist"] .retained-view:not([hidden]) { animation: mt-mist-view 0.5s ease-out both; }
+  :root[data-look="forest"] .retained-view:not([hidden]) { animation: mt-grow-view 0.4s cubic-bezier(.2,.8,.2,1) both; }
+  :root[data-look="warm"] .retained-view:not([hidden]) { transform-origin: 0 50%; animation: mt-page-view 0.42s cubic-bezier(.2,.7,.2,1) both; }
+  :root[data-look="cute"] .retained-view:not([hidden]) { animation: mt-jelly-view 0.45s cubic-bezier(.3,1.5,.5,1) both; }
+  :root[data-look="casual"] .retained-view:not([hidden]) { animation: mt-sticker-view 0.36s cubic-bezier(.3,1.3,.5,1) both; }
+  :root[data-look="sunny"] .retained-view:not([hidden]) { animation: mt-sun-view 0.4s ease-out both; }
+  :root[data-look="heal"] .retained-view:not([hidden]) { animation: mt-float-view 0.6s cubic-bezier(.2,.7,.2,1) both; }
+  :root[data-look="ink"] .retained-view:not([hidden]) { animation: mt-ink-view 0.5s ease-out both; }
+  :root[data-look="retro"] .retained-view:not([hidden]) { animation: mt-feed-view 0.3s steps(3, end) both; }
+  :root[data-look="minimal"] .retained-view:not([hidden]) { animation: mt-min-view 0.16s linear both; }
+
+  /* ---------- 列表行依次入场 ---------- */
+  :root[data-look] .divide-y > :nth-child(-n+8) { animation: var(--mt-row, mt-row) var(--mt-row-d, 0.3s) calc((var(--mt-n, 1) - 1) * var(--mt-gap, 32ms)) var(--mt-row-ease, cubic-bezier(.2,.8,.2,1)) backwards; }
+  :root[data-look] .divide-y > :nth-child(2) { --mt-n: 2; }
+  :root[data-look] .divide-y > :nth-child(3) { --mt-n: 3; }
+  :root[data-look] .divide-y > :nth-child(4) { --mt-n: 4; }
+  :root[data-look] .divide-y > :nth-child(5) { --mt-n: 5; }
+  :root[data-look] .divide-y > :nth-child(6) { --mt-n: 6; }
+  :root[data-look] .divide-y > :nth-child(7) { --mt-n: 7; }
+  :root[data-look] .divide-y > :nth-child(8) { --mt-n: 8; }
+  :root[data-look="tech"] { --mt-row: mt-row-x; --mt-row-d: 0.2s; --mt-gap: 22ms; }
+  :root[data-look="mist"] { --mt-row: mt-row-fade; --mt-row-d: 0.45s; --mt-gap: 45ms; }
+  :root[data-look="cute"] { --mt-row: mt-row-pop; --mt-row-ease: cubic-bezier(.3,1.6,.5,1); }
+  :root[data-look="casual"] { --mt-row: mt-row-tilt; }
+  :root[data-look="heal"] { --mt-row-d: 0.5s; --mt-gap: 50ms; }
+  :root[data-look="ink"] { --mt-row: mt-row-fade; --mt-row-d: 0.4s; }
+  :root[data-look="retro"] { --mt-row: mt-row-type; --mt-row-d: 0.2s; --mt-gap: 45ms; --mt-row-ease: steps(2, end); }
+  :root[data-look="minimal"] { --mt-row: mt-row-fade; --mt-row-d: 0.14s; --mt-gap: 16ms; --mt-row-ease: linear; }
+
+  /* ---------- 侧栏当前项的标记：换到新的一项时按风格出场 ---------- */
+  :root[data-look] .nav-active::before { animation: mt-mark 0.28s cubic-bezier(.2,.8,.2,1) both; }
+  :root[data-look="forest"] .nav-active::before { animation: mt-leaf 0.4s cubic-bezier(.3,1.5,.5,1) both; }
+  :root[data-look="warm"] .nav-active::before { transform-origin: 50% 0; animation: mt-ribbon 0.4s cubic-bezier(.3,1.3,.5,1) both; }
+  :root[data-look="cute"] .nav-active::before, :root[data-look="sunny"] .nav-active::before { animation: mt-dot 0.35s cubic-bezier(.3,1.8,.5,1) both; }
+  :root[data-look="ink"] .nav-active::before { transform-origin: 50% 0; animation: mt-stroke 0.35s ease-out both; }
+  :root[data-look="retro"] .nav-active::before { animation: mt-arrow 0.24s steps(2, end) both; }
+  :root[data-look="minimal"] .nav-active::before { animation: none; }
+  :root[data-look="sunny"] .nav-emblem::before { transition: transform 0.6s ease; }
+  :root[data-look="sunny"] .nav-emblem:hover::before { animation-duration: 3s; }
+  :root[data-look="cute"] .nav-emblem:hover::before { animation: mt-ear 0.4s ease-in-out; }
+
+  /* ---------- 悬停：各风格的按钮和书签页 ---------- */
+  :root[data-look="casual"]:not([data-look="retro"]):not([data-look="ink"]):not([data-look="minimal"]) .button:hover:where(:not(:disabled):not([data-disabled="true"])) { transform: translateY(-1px) rotate(-0.6deg); }
+  :root[data-look="cute"]:not([data-look="retro"]):not([data-look="ink"]):not([data-look="minimal"]) .button:hover:where(:not(:disabled):not([data-disabled="true"])) { transform: translateY(-2px) scale(1.02); }
+  :root[data-look="heal"] .button { transition-duration: 420ms, 260ms, 300ms, 200ms; }
+  :root[data-look="retro"] .button--secondary:is(:active, [data-pressed="true"]) { transform: translateY(2px); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--foreground) 14%, transparent); }
+  :root[data-look="ink"] .button--primary:is(:active, [data-pressed="true"]) { transform: scale(0.97); opacity: 0.88; }
+  :root[data-look="minimal"] .button:is(:active, [data-pressed="true"]) { transform: translateY(1px); }
+  :root[data-look] .book-tab { transition: background-color 0.15s ease, color 0.15s ease, transform 0.2s cubic-bezier(.3,1.4,.5,1); }
+  :root[data-look="cute"] .book-tab:hover, :root[data-look="casual"] .book-tab:hover { transform: translateY(-2px); }
+  :root[data-look="warm"] .book-tab:hover { transform: translateY(-1px); }
+
+  /* ---------- 确认小窗 ---------- */
+  :root[data-look="ink"] .cd-mark { transform-origin: 50% 0; animation: mt-stroke 0.4s 0.08s ease-out both; }
+}
+
+@keyframes mt-tech-view { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: none; } }
+@keyframes mt-mist-view { from { opacity: 0; transform: scale(0.992); } to { opacity: 1; transform: none; } }
+@keyframes mt-grow-view { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes mt-page-view { from { opacity: 0; transform: perspective(1200px) rotateY(-5deg) translateX(8px); } to { opacity: 1; transform: none; } }
+@keyframes mt-jelly-view { 0% { opacity: 0; transform: scale(0.96, 0.94); } 60% { opacity: 1; transform: scale(1.006, 1.01); } 100% { opacity: 1; transform: none; } }
+@keyframes mt-sticker-view { from { opacity: 0; transform: translateY(6px) rotate(-0.5deg); } to { opacity: 1; transform: none; } }
+@keyframes mt-sticker-dialog { from { opacity: 0; transform: translateY(10px) rotate(-2deg) scale(0.97); } to { opacity: 1; transform: rotate(-0.3deg); } }
+@keyframes mt-sun-view { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+@keyframes mt-float-view { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes mt-ink-view { 0% { opacity: 0; } 40% { opacity: 0.55; } 100% { opacity: 1; } }
+@keyframes mt-feed-view { from { opacity: 0.2; transform: translateY(9px); } to { opacity: 1; transform: none; } }
+@keyframes mt-min-view { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: none; } }
+@keyframes mt-dialog { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: none; } }
+
+@keyframes mt-row { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+@keyframes mt-row-x { from { opacity: 0; transform: translateX(-6px); } to { opacity: 1; transform: none; } }
+@keyframes mt-row-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes mt-row-pop { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: none; } }
+@keyframes mt-row-tilt { from { opacity: 0; transform: translateY(5px) rotate(-0.4deg); } to { opacity: 1; transform: none; } }
+@keyframes mt-row-type { from { opacity: 0.25; } to { opacity: 1; } }
+
+@keyframes mt-mark { from { opacity: 0; transform: scaleY(0.3); } to { opacity: 1; } }
+@keyframes mt-leaf { from { opacity: 0; transform: rotate(-40deg) scale(0.2); } to { opacity: 1; transform: rotate(12deg); } }
+@keyframes mt-ribbon { from { transform: scaleY(0); } to { transform: none; } }
+@keyframes mt-dot { from { transform: scale(0); } to { transform: none; } }
+@keyframes mt-stroke { from { opacity: 0.2; transform: scaleY(0); } to { opacity: 1; transform: none; } }
+@keyframes mt-arrow { from { opacity: 0; transform: translateX(-4px); } to { opacity: 1; transform: none; } }
+@keyframes mt-ear { 0%, 100% { transform: rotate(-24deg); } 50% { transform: rotate(-38deg); } }
+
+/* ---------- 完成提示：智能体工作台“交付”那一格完成、结果卡出现时，按风格给一个收尾动作 ----------
+   只写在样式里，不碰工作台组件；动作只播一次。科技=勾一下就停；雾蓝=慢慢清晰；森林=叶子长出来那样从下往上；暖棕=合上书那样落一下；
+   可爱=蹦一下；休闲=贴纸拍上去；阳光=亮一下；治愈=浮起；水墨=盖章（压下去再弹回）；复古=敲章（一顿一顿）；极简=不动，只换颜色。 */
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-look] .aw-phase[data-phase="deliver"][data-state="done"] .aw-phase-node { animation: var(--mt-done, mt-done) var(--mt-done-d, 0.45s) var(--mt-done-ease, cubic-bezier(.3,1.6,.5,1)) backwards; }
+  :root[data-look] .aw-outcome[data-tone="pass"] > .aw-card { animation: var(--mt-card, mt-row) 0.4s cubic-bezier(.2,.8,.2,1) backwards; }
+  :root[data-look="mist"] { --mt-done: mt-row-fade; --mt-done-d: 0.7s; --mt-done-ease: ease-out; --mt-card: mt-row-fade; }
+  :root[data-look="forest"] { --mt-done: mt-sprout-done; --mt-card: mt-grow-view; }
+  :root[data-look="warm"] { --mt-done: mt-press-done; --mt-done-ease: cubic-bezier(.4,0,.2,1); --mt-card: mt-page-view; }
+  :root[data-look="cute"] { --mt-done: mt-hop-done; --mt-card: mt-jelly-view; }
+  :root[data-look="casual"] { --mt-card: mt-sticker-view; }
+  :root[data-look="sunny"] { --mt-done: mt-shine-done; --mt-done-d: 0.6s; --mt-card: mt-sun-view; }
+  :root[data-look="heal"] { --mt-done: mt-row-fade; --mt-done-d: 0.8s; --mt-card: mt-float-view; }
+  :root[data-look="ink"], :root[data-look="retro"] { --mt-done: mt-stamp-done; --mt-done-d: 0.32s; --mt-done-ease: cubic-bezier(.5,0,.6,1.5); --mt-card: mt-ink-view; }
+  :root[data-look="retro"] { --mt-done-ease: steps(3, end); --mt-card: mt-feed-view; }
+  :root[data-look="minimal"] { --mt-done: none; --mt-card: mt-min-view; }
+}
+@keyframes mt-done { from { transform: scale(0.4); } to { transform: none; } }
+@keyframes mt-sprout-done { from { transform: translateY(4px) scaleY(0.4); opacity: 0.3; } to { transform: none; opacity: 1; } }
+@keyframes mt-press-done { 0% { transform: translateY(-5px); opacity: 0.4; } 70% { transform: translateY(1px); opacity: 1; } 100% { transform: none; } }
+@keyframes mt-hop-done { 0% { transform: translateY(0) scale(0.6); } 45% { transform: translateY(-6px) scale(1.12); } 75% { transform: translateY(0) scale(0.95, 1.05); } 100% { transform: none; } }
+@keyframes mt-shine-done { 0% { transform: scale(0.7) rotate(-40deg); opacity: 0.3; } 100% { transform: none; opacity: 1; } }
+@keyframes mt-stamp-done { 0% { transform: scale(1.7) rotate(-12deg); opacity: 0; } 70% { transform: scale(0.94) rotate(-3deg); opacity: 1; } 100% { transform: none; } }

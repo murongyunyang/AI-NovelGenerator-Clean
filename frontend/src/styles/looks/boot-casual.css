@@ -1,0 +1,46 @@
+/* 休闲：手账本上的一页。三段。
+   1. 几朵云飘出来，一架纸飞机从左下角飞进来，身后留一串点状航迹，兜一圈停在书名右上方（0–1.8 秒）；
+   2. 书名稍微歪着落下，下面随手画一道波浪线，纸飞机停下后轻轻起伏；
+   3. 左上角随手描一个小太阳（先画圈、再一道道画光芒），书名旁点两颗闪光，右下角画一颗小星星。
+   退场：纸飞机往右上飞走，整层跟着向右滑开。 */
+[data-scene="casual"] { background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 9%, transparent) 1px, transparent 1.6px) 0 0 / 22px 22px, var(--background); }
+.ca-cloud { position: absolute; height: 2.2rem; border-radius: 999px; background: color-mix(in srgb, var(--color-surface-raised) 85%, transparent); box-shadow: 0 6px 18px -12px rgb(0 0 0 / 0.25); opacity: 0; animation: bs-in 0.8s 0.1s forwards, ca-cloud 14s linear infinite; }
+.ca-cloud::before { content: ""; position: absolute; left: 22%; bottom: 45%; width: 2.6rem; height: 2.6rem; border-radius: 50%; background: inherit; }
+.ca-c1 { left: 10%; top: 16%; width: 7rem; }
+.ca-c2 { right: 12%; top: 24%; width: 9rem; animation-duration: 0.8s, 18s; }
+.ca-c3 { left: 22%; bottom: 16%; width: 6rem; animation-duration: 0.8s, 16s; }
+.dark [data-scene="casual"] .ca-cloud { background: color-mix(in srgb, var(--color-surface-raised) 60%, transparent); box-shadow: none; }
+@keyframes ca-cloud { to { transform: translateX(3rem); } }
+
+/* 1. 纸飞机与航迹 */
+.ca-sky { position: absolute; left: 50%; top: 50%; width: 800px; height: 400px; margin: -200px 0 0 -400px; }
+@media (max-width: 900px) { .ca-sky { transform: scale(0.78); } }
+@media (max-width: 640px) { .ca-sky { transform: scale(0.5); } }
+.ca-trail { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.ca-dash { fill: none; stroke: var(--decor-2); stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 1 11; opacity: 0.8; }
+.ca-reveal { fill: none; stroke: #fff; stroke-width: 14; stroke-dasharray: 1; stroke-dashoffset: 1; animation: bs-draw 1.6s 0.2s cubic-bezier(.4,0,.3,1) forwards; }
+.ca-plane { position: absolute; left: 0; top: 0; width: 44px; height: 44px; offset-rotate: auto; offset-anchor: center; offset-distance: 0%; animation: ca-fly 1.6s 0.2s cubic-bezier(.4,0,.3,1) forwards; }
+@keyframes ca-fly { to { offset-distance: 100%; } }
+.ca-plane-in { width: 100%; height: 100%; animation: ca-bob 2.2s 1.8s ease-in-out infinite; }
+@keyframes ca-bob { 50% { transform: translateY(-4px) rotate(-3deg); } }
+.ca-plane svg { width: 100%; height: 100%; overflow: visible; }
+.ca-wing { fill: var(--color-surface-raised); stroke: var(--foreground); stroke-width: 1.6; stroke-linejoin: round; }
+.ca-flap { fill: color-mix(in srgb, var(--decor) 35%, var(--color-surface-raised)); stroke: var(--foreground); stroke-width: 1.6; stroke-linejoin: round; }
+
+/* 2. 书名和波浪线 */
+.ca-title { position: absolute; left: 0; right: 0; top: 50%; margin-top: -1.2rem; text-align: center; font-size: clamp(1.5rem, 3.8vw, 2.2rem); font-weight: 800; letter-spacing: 0.06em; color: var(--foreground); opacity: 0; transform: translateX(-24px) rotate(-6deg); animation: ca-land 0.6s 1.2s cubic-bezier(.3,1.4,.5,1) forwards; }
+@keyframes ca-land { to { opacity: 1; transform: rotate(-2deg); } }
+.ca-underline { position: absolute; left: 50%; top: calc(50% + 1.7rem); width: min(15rem, 60vw); height: 1.2rem; margin-left: calc(min(15rem, 60vw) / -2); overflow: visible; transform: rotate(-2deg); }
+.ca-underline path { fill: none; stroke: var(--decor-2); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: bs-draw 0.6s 1.65s ease-out forwards; }
+
+/* 3. 手绘涂鸦：小太阳、两颗闪光、一颗小星星，都是一笔一笔描出来的 */
+.ca-doodle path { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.ca-sun { stroke: var(--decor); stroke-width: 2.5; animation: bs-draw 0.5s 2.2s ease-out forwards; }
+.ca-ray { stroke: var(--decor); stroke-width: 2.5; animation: bs-draw 0.12s calc(2.6s + var(--i) * 0.05s) ease-out forwards; }
+.ca-spark { stroke: var(--decor-2); stroke-width: 2.5; animation: bs-draw 0.25s calc(2.4s + var(--i) * 0.25s) ease-out forwards; }
+.ca-star { stroke: var(--foreground); stroke-width: 2; opacity: 0.7; animation: bs-draw 0.5s 2.75s ease-in-out forwards; }
+
+:root[data-look="casual"] .boot-screen[data-phase="leaving"] { animation: ca-slide 0.6s 0.18s cubic-bezier(.6,0,.3,1) forwards; }
+:root[data-look="casual"] .boot-screen[data-phase="leaving"] .ca-plane-in { animation: ca-away 0.6s cubic-bezier(.5,0,.8,.4) forwards; }
+@keyframes ca-slide { to { transform: translateX(100%); } }
+@keyframes ca-away { to { transform: translate(110vw, -30vh) rotate(-12deg); } }

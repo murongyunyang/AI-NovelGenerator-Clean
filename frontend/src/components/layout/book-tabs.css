@@ -1,0 +1,81 @@
+/* 顶栏书签页的基础样式；各风格在 styles/looks/*.css 里给 .book-tab 做变体。 */
+.book-tabs {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  align-items: flex-end;
+  gap: 0.25rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  align-self: stretch;
+  padding: 0.5rem 0.25rem 0;
+  scrollbar-width: thin;
+}
+.book-tab {
+  position: relative;
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  max-width: 13rem;
+  min-height: 2.25rem;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  border-radius: 0.6rem 0.6rem 0 0;
+  color: var(--color-muted);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.book-tab:hover { color: var(--color-foreground); background: color-mix(in srgb, var(--color-surface-secondary) 70%, transparent); }
+.book-tab[data-active="true"] {
+  color: var(--color-foreground);
+  background: var(--color-background);
+  border-color: var(--color-border);
+}
+/* 当前书签压住顶栏底线，像从书架里抽出来的那一本。 */
+.book-tab[data-active="true"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--color-background);
+}
+.book-tab-main {
+  display: flex;
+  min-width: 0;
+  min-height: 2.25rem;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0 0.25rem 0 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border-radius: inherit;
+}
+.book-tab-main:focus-visible, .book-tab-close:focus-visible { outline: 2px solid color-mix(in srgb, var(--color-accent) 55%, transparent); outline-offset: -2px; }
+.book-tab-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.book-tab-dot {
+  flex: 0 0 auto;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: var(--color-accent);
+  animation: book-tab-pulse 1.6s ease-in-out infinite;
+}
+@keyframes book-tab-pulse { 50% { opacity: 0.35; } }
+.book-tab-close {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-right: 0.25rem;
+  border-radius: 0.4rem;
+  color: var(--color-muted);
+  opacity: 0.7;
+}
+.book-tab-close:hover { opacity: 1; color: var(--color-foreground); background: var(--color-surface-secondary); }
+@media (max-width: 639px) {
+  .book-tab { max-width: 8.5rem; }
+  .book-tab-main { padding-left: 0.55rem; }
+}
+@media (prefers-reduced-motion: reduce) { .book-tab-dot { animation: none; } }

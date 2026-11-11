@@ -1,0 +1,76 @@
+/* ===== 开机动画：各风格共用 =====
+   服务端直接渲染进 HTML，样式随 CSS 一起阻塞渲染，第一帧就是它。颜色取当前风格的主题变量（首帧脚本已设好 data-look 和 .dark），
+   所以每种风格自动有亮色、暗色两版。永远不拦截点击。各风格的编排在 boot-<风格>.css，选择器都以 [data-look="…"] 开头。 */
+.boot-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  overflow: hidden;
+  background: var(--background);
+  color: var(--foreground);
+  pointer-events: none;
+  /* 兜底：即使脚本一直没跑起来，25 秒后也自行淡出，不会永远盖住界面。BootScreen 用这条动画的开始时间做计时起点。 */
+  animation: boot-failsafe 0.4s ease 25s forwards;
+}
+.boot-screen * { pointer-events: none; }
+.boot-screen i { display: block; font-style: normal; }
+.bs-scene { position: absolute; inset: 0; display: none; }
+/* 只显示当前风格那一幕；data-look 缺失时（存储不可用）显示科技那一幕。 */
+:root[data-look="tech"] .bs-scene[data-scene="tech"],
+:root:not([data-look]) .bs-scene[data-scene="tech"],
+:root[data-look="mist"] .bs-scene[data-scene="mist"],
+:root[data-look="forest"] .bs-scene[data-scene="forest"],
+:root[data-look="warm"] .bs-scene[data-scene="warm"],
+:root[data-look="cute"] .bs-scene[data-scene="cute"],
+:root[data-look="casual"] .bs-scene[data-scene="casual"],
+:root[data-look="sunny"] .bs-scene[data-scene="sunny"],
+:root[data-look="heal"] .bs-scene[data-scene="heal"],
+:root[data-look="ink"] .bs-scene[data-scene="ink"],
+:root[data-look="retro"] .bs-scene[data-scene="retro"],
+:root[data-look="minimal"] .bs-scene[data-scene="minimal"] { display: block; }
+
+/* 文字由 CSS 画出 */
+.boot-screen [data-text]::before { content: attr(data-text); }
+.bs-ch { display: inline-block; white-space: pre; }
+
+/* 退场的默认做法：淡出。各风格用更具体的选择器换成自己的退场。 */
+.boot-screen[data-phase="leaving"] { animation: boot-out 0.5s ease forwards; }
+
+/* 点击或按键跳过：不放风格自己的退场（遮罩、推镜头这些要 0.6 秒以上），统一在 0.26 秒内淡出，用户点到的界面马上露出来。 */
+.boot-screen[data-phase="leaving"][data-skip] {
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+  clip-path: none !important;
+  transform: none !important;
+  filter: none !important;
+  animation: boot-out 0.26s ease-out forwards !important;
+}
+
+/* 同一会话再次整页载入：所有入场动作直接跳到最后一帧，再快速淡出。 */
+[data-boot="quick"] .boot-screen *,
+[data-boot="quick"] .boot-screen *::before,
+[data-boot="quick"] .boot-screen *::after {
+  animation-delay: 0s !important;
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+}
+[data-boot="quick"] .boot-screen[data-phase="leaving"] { -webkit-mask-image: none !important; mask-image: none !important; clip-path: none !important; transform: none !important; filter: none !important; animation: boot-out 0.3s ease forwards !important; }
+
+/* 减少动态效果：不播放任何动作，静态显示成型画面后淡出；兜底淡出仍然保留。 */
+@media (prefers-reduced-motion: reduce) {
+  .boot-screen *, .boot-screen *::before, .boot-screen *::after {
+    animation-delay: 0s !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition: none !important;
+  }
+  .boot-screen[data-phase="leaving"] { -webkit-mask-image: none !important; mask-image: none !important; clip-path: none !important; transform: none !important; filter: none !important; animation: boot-out 0.3s ease forwards !important; }
+}
+
+@keyframes boot-failsafe { to { opacity: 0; visibility: hidden; } }
+@keyframes boot-out { to { opacity: 0; visibility: hidden; } }
+@keyframes bs-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes bs-out { to { opacity: 0; } }
+@keyframes bs-rise { to { opacity: 1; transform: none; } }
+@keyframes bs-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@keyframes bs-draw { to { stroke-dashoffset: 0; } }

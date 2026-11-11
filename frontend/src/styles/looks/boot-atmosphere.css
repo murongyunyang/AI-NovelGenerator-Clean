@@ -1,0 +1,182 @@
+/* ===== 启动画面主题化过场 =====
+   每幕已有叙事动画，这里补一层很轻的“空气”：光束、纸纹、雾幕、校准线等。
+   伪元素不接收指针，也不会改变场景节点的交互或布局。 */
+
+.bs-scene::before,
+.bs-scene::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 18;
+  opacity: 0;
+}
+
+/* 科技：横向扫描光穿过星空，暗色时增强深空边缘。 */
+[data-scene="tech"]::before {
+  opacity: .5;
+  background: linear-gradient(180deg, transparent 0 42%, color-mix(in srgb, var(--decor) 20%, transparent) 50%, transparent 58%);
+  transform: translateY(-100%);
+  animation: boot-atmo-scan 6s 1.1s ease-in-out infinite;
+}
+[data-scene="tech"]::after {
+  opacity: .5;
+  background: radial-gradient(ellipse at 50% 50%, transparent 35%, color-mix(in srgb, var(--background) 45%, transparent) 100%);
+}
+
+/* 雾蓝：前后景雾幕交错，夜间月晕更明显。 */
+[data-scene="mist"]::before {
+  opacity: .55;
+  background: radial-gradient(ellipse at 25% 68%, color-mix(in srgb, var(--decor) 18%, transparent), transparent 27%),
+    radial-gradient(ellipse at 76% 78%, color-mix(in srgb, var(--decor-2) 14%, transparent), transparent 25%);
+  animation: boot-atmo-fog 9s ease-in-out infinite alternate;
+}
+[data-scene="mist"]::after {
+  opacity: .45;
+  background: radial-gradient(circle at 76% 18%, color-mix(in srgb, var(--decor-2) 26%, transparent), transparent 9rem);
+  animation: boot-atmo-breathe 7s ease-in-out infinite alternate;
+}
+
+/* 森林：树冠缝隙的光斑，夜间换成柔和萤火色。 */
+[data-scene="forest"]::before {
+  opacity: .5;
+  background: radial-gradient(circle at 18% 16%, color-mix(in srgb, var(--decor-2) 22%, transparent), transparent 6rem),
+    radial-gradient(circle at 82% 28%, color-mix(in srgb, var(--decor-2) 18%, transparent), transparent 8rem);
+  animation: boot-atmo-dapple 8s ease-in-out infinite alternate;
+}
+[data-scene="forest"]::after {
+  opacity: .4;
+  background: linear-gradient(115deg, transparent 28%, color-mix(in srgb, var(--decor-2) 11%, transparent) 46%, transparent 62%);
+  background-size: 180% 100%;
+  animation: boot-atmo-sweep 11s ease-in-out infinite;
+}
+
+/* 暖棕：一层纸张纤维与灯下暖光。 */
+[data-scene="warm"]::before {
+  opacity: .32;
+  background: repeating-linear-gradient(0deg, color-mix(in srgb, var(--foreground) 5%, transparent) 0 1px, transparent 1px 5px);
+  mix-blend-mode: multiply;
+  animation: boot-atmo-paper 18s linear infinite;
+}
+[data-scene="warm"]::after {
+  opacity: .58;
+  background: radial-gradient(circle at 50% 34%, color-mix(in srgb, var(--decor-2) 16%, transparent), transparent 34%);
+  animation: boot-atmo-lamp 7s ease-in-out infinite alternate;
+}
+
+/* 可爱：四角闪光和柔和彩纸光晕。 */
+[data-scene="cute"]::before {
+  opacity: .7;
+  background: radial-gradient(circle at 15% 20%, color-mix(in srgb, var(--decor-2) 20%, transparent), transparent 4rem),
+    radial-gradient(circle at 88% 76%, color-mix(in srgb, var(--decor) 18%, transparent), transparent 5rem);
+  animation: boot-atmo-breathe 8s ease-in-out infinite alternate;
+}
+[data-scene="cute"]::after {
+  inset: 12%;
+  border: 1px dashed color-mix(in srgb, var(--decor) 24%, transparent);
+  border-radius: 2rem;
+  animation: boot-atmo-pop 5s 1s ease-in-out infinite;
+}
+
+/* 休闲：像铅笔画出的风线，随纸飞机方向缓慢移动。 */
+[data-scene="casual"]::before {
+  opacity: .48;
+  background: repeating-linear-gradient(164deg, transparent 0 42px, color-mix(in srgb, var(--decor) 12%, transparent) 43px 44px);
+  animation: boot-atmo-paper 20s linear infinite;
+}
+[data-scene="casual"]::after {
+  opacity: .5;
+  background: linear-gradient(105deg, transparent 26%, color-mix(in srgb, var(--decor-2) 18%, transparent) 48%, transparent 68%);
+  background-size: 190% 100%;
+  animation: boot-atmo-sweep 10s ease-in-out infinite;
+}
+
+/* 阳光：从左上方扫过的日光束与暖色呼吸。 */
+[data-scene="sunny"]::before {
+  opacity: .48;
+  background: conic-gradient(from 215deg at 12% 8%, color-mix(in srgb, var(--decor-2) 24%, transparent), transparent 18%, transparent 52%, color-mix(in srgb, var(--decor) 10%, transparent), transparent 68%);
+  animation: boot-atmo-sunbeam 12s ease-in-out infinite alternate;
+}
+[data-scene="sunny"]::after {
+  opacity: .4;
+  background: radial-gradient(circle at 14% 11%, color-mix(in srgb, var(--decor-2) 22%, transparent), transparent 10rem);
+  animation: boot-atmo-breathe 8s ease-in-out infinite alternate;
+}
+
+/* 治愈：水面的柔光扫过，中心保持安静。 */
+[data-scene="heal"]::before {
+  opacity: .46;
+  background: radial-gradient(ellipse at 50% 78%, color-mix(in srgb, var(--decor-2) 18%, transparent), transparent 34%);
+  animation: boot-atmo-ripple 8s ease-out infinite;
+}
+[data-scene="heal"]::after {
+  opacity: .45;
+  background: linear-gradient(100deg, transparent 20%, color-mix(in srgb, var(--decor) 13%, transparent) 50%, transparent 80%);
+  background-size: 220% 100%;
+  animation: boot-atmo-sweep 13s ease-in-out infinite;
+}
+
+/* 水墨：纸纤维和一层缓慢晕开的淡墨。 */
+[data-scene="ink"]::before {
+  opacity: .28;
+  background: repeating-linear-gradient(92deg, transparent 0 8px, color-mix(in srgb, var(--foreground) 6%, transparent) 9px, transparent 10px);
+  animation: boot-atmo-paper 26s linear infinite;
+}
+[data-scene="ink"]::after {
+  opacity: .48;
+  background: radial-gradient(ellipse at 80% 18%, color-mix(in srgb, var(--foreground) 10%, transparent), transparent 22%);
+  animation: boot-atmo-ink 12s ease-in-out infinite alternate;
+}
+
+/* 复古：胶片竖向划痕和暖色放映光。 */
+[data-scene="retro"]::before {
+  opacity: .3;
+  background: repeating-linear-gradient(90deg, transparent 0 48px, color-mix(in srgb, var(--foreground) 10%, transparent) 49px 50px);
+  animation: boot-atmo-film 6s steps(5) infinite;
+}
+[data-scene="retro"]::after {
+  opacity: .5;
+  background: radial-gradient(ellipse at 50% -5%, color-mix(in srgb, var(--decor-2) 18%, transparent), transparent 60%);
+  animation: boot-atmo-lamp 10s ease-in-out infinite alternate;
+}
+
+/* 极简：校准十字与一条很克制的蓝色导线。 */
+[data-scene="minimal"]::before {
+  inset: 8%;
+  opacity: .45;
+  border: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent);
+  background: linear-gradient(var(--decor), var(--decor)) left top / 1.5rem 1px no-repeat,
+    linear-gradient(var(--decor), var(--decor)) left top / 1px 1.5rem no-repeat,
+    linear-gradient(var(--decor), var(--decor)) right bottom / 1.5rem 1px no-repeat,
+    linear-gradient(var(--decor), var(--decor)) right bottom / 1px 1.5rem no-repeat;
+  animation: boot-atmo-minimal 10s ease-in-out infinite alternate;
+}
+[data-scene="minimal"]::after {
+  top: 22%; bottom: auto; height: 1px;
+  opacity: .55;
+  background: linear-gradient(90deg, transparent, var(--decor), transparent);
+  animation: boot-atmo-guide 9s ease-in-out infinite;
+}
+
+@keyframes boot-atmo-scan { 0%, 100% { transform: translateY(-100%); } 50% { transform: translateY(100%); } }
+@keyframes boot-atmo-fog { from { transform: translateX(-3%); } to { transform: translateX(4%); } }
+@keyframes boot-atmo-breathe { from { transform: scale(.94); opacity: .25; } to { transform: scale(1.08); opacity: .75; } }
+@keyframes boot-atmo-dapple { from { transform: translate(0, 0); opacity: .2; } to { transform: translate(2%, 3%); opacity: .7; } }
+@keyframes boot-atmo-sweep { from { background-position: 140% 0; } to { background-position: -40% 0; } }
+@keyframes boot-atmo-paper { to { background-position: 0 48px; } }
+@keyframes boot-atmo-lamp { from { transform: scale(.92); } to { transform: scale(1.1); } }
+@keyframes boot-atmo-pop { 0%, 100% { transform: scale(.98); opacity: .2; } 50% { transform: scale(1); opacity: .7; } }
+@keyframes boot-atmo-sunbeam { from { transform: rotate(-2deg) scale(1); } to { transform: rotate(3deg) scale(1.05); } }
+@keyframes boot-atmo-ripple { 0% { transform: scale(.7); opacity: .1; } 50% { opacity: .6; } 100% { transform: scale(1.3); opacity: .1; } }
+@keyframes boot-atmo-ink { from { transform: scale(.86) rotate(-2deg); } to { transform: scale(1.12) rotate(3deg); } }
+@keyframes boot-atmo-film { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(1%); } }
+@keyframes boot-atmo-minimal { from { transform: scale(.98); } to { transform: scale(1.01); } }
+@keyframes boot-atmo-guide { 0%, 100% { transform: translateX(-14%); opacity: .15; } 50% { transform: translateX(14%); opacity: .7; } }
+
+:root[data-hidden="true"] .bs-scene::before,
+:root[data-hidden="true"] .bs-scene::after { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .bs-scene::before,
+  .bs-scene::after { animation: none !important; }
+}

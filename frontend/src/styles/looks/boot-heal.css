@@ -1,0 +1,67 @@
+/* 治愈：三段。
+   1. 一片叶子从上面垂进画面，叶尖慢慢攒出一滴水，叶子被坠得往下弯（0–1.2 秒）；
+   2. 水滴落下，叶子弹回去；水滴落进湖面，涟漪一圈圈散开，旁边的睡莲叶跟着轻轻晃；
+   3. 书名一个字一个字浮上来，水面上是它淡淡的、一晃一晃的倒影。
+   退场：从水滴落下的地方荡开一个边缘柔和的圆，露出界面。 */
+[data-scene="heal"] { --he-y: 62%; background: var(--background); }
+.he-blob { position: absolute; border-radius: 50%; opacity: 0; animation: bs-in 1.2s forwards, he-float 9s ease-in-out infinite alternate; }
+.he-b1 { left: -8%; top: -10%; width: 34rem; height: 26rem; background: radial-gradient(closest-side, color-mix(in srgb, var(--decor) 22%, transparent), transparent); }
+.he-b2 { right: -10%; bottom: -14%; width: 36rem; height: 28rem; background: radial-gradient(closest-side, color-mix(in srgb, var(--decor-2) 24%, transparent), transparent); animation-duration: 1.2s, 11s; }
+.he-b3 { right: 8%; top: 4%; width: 22rem; height: 18rem; background: radial-gradient(closest-side, color-mix(in srgb, #f2b38f 20%, transparent), transparent); animation-duration: 1.2s, 13s; }
+@keyframes he-float { to { transform: translate(2rem, 1.4rem) scale(1.06); } }
+
+/* 1. 叶子：从顶上垂下来，叶尖正对画面中线；攒水时被坠弯，水落下后弹回 */
+.he-leaf { position: absolute; left: 50%; top: 0; width: 0; height: 0; transform: translateY(-9rem); animation: he-leaf-in 0.8s 0.1s cubic-bezier(.2,.8,.2,1) forwards, he-leaf-sag 0.5s 0.8s ease-in-out forwards, he-leaf-spring 0.8s 1.2s cubic-bezier(.3,1.6,.4,1) forwards; }
+@keyframes he-leaf-in { to { transform: translateY(0); } }
+@keyframes he-leaf-sag { from { transform: translateY(0); } to { transform: translateY(0.5rem) rotate(2deg); } }
+@keyframes he-leaf-spring { from { transform: translateY(0.5rem) rotate(2deg); } to { transform: none; } }
+.he-leaf-in { position: absolute; left: -2.6rem; top: 7.3rem; width: 2.8rem; height: 6rem; margin-top: -6rem; border-radius: 0 100% 0 100%; background: color-mix(in srgb, var(--decor-2) 75%, var(--background)); transform: rotate(12deg); transform-origin: 100% 100%; }
+.he-leaf-in::after { content: ""; position: absolute; left: 50%; top: 8%; bottom: 8%; width: 1px; background: color-mix(in srgb, var(--decor-2) 50%, var(--foreground)); transform: rotate(-26deg); }
+.he-leaf::before { content: ""; position: absolute; left: 0.1rem; top: -1rem; width: 1.5px; height: 2.6rem; background: color-mix(in srgb, var(--decor-2) 60%, var(--foreground)); transform: rotate(-20deg); transform-origin: 50% 0; }
+/* 叶尖攒出的水珠 */
+.he-bead { position: absolute; left: -0.3rem; top: 7.25rem; width: 0.6rem; height: 0.8rem; border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%; background: color-mix(in srgb, var(--decor) 70%, var(--color-surface-raised)); transform: scale(0); transform-origin: 50% 0; animation: he-bead 1.1s 0.15s ease-in forwards; }
+@keyframes he-bead { 60% { transform: scale(0.75); } 95% { transform: scale(1, 1.15); } 100% { transform: scale(0); } }
+
+/* 2. 落下的水滴（从叶尖的位置落到湖面） */
+.he-drop { position: absolute; left: 50%; top: calc(var(--he-y) - 0.8rem); width: 0.7rem; height: 0.95rem; margin-left: -0.35rem; border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%; background: color-mix(in srgb, var(--decor) 75%, var(--color-surface-raised)); opacity: 0; animation: he-drop 0.55s 1.2s cubic-bezier(.55,0,.9,.5) forwards; }
+@keyframes he-drop { 0% { opacity: 1; transform: translateY(calc(7.6rem - 62vh)); } 92% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(0) scale(1.8, 0.2); } }
+
+/* 湖面：一片压扁的淡色椭圆，涟漪在它中间 */
+.he-water { position: absolute; left: 50%; top: var(--he-y); width: min(34rem, 92vw); height: 5.5rem; margin: -2.75rem 0 0 calc(min(34rem, 92vw) / -2); border-radius: 50%; background: radial-gradient(closest-side, color-mix(in srgb, var(--decor) 14%, transparent), transparent); opacity: 0; animation: bs-in 0.8s 0.3s forwards; }
+.he-pond { position: absolute; left: 50%; top: var(--he-y); width: 0; height: 0; }
+.he-ring { position: absolute; left: -6rem; top: -1.5rem; width: 12rem; height: 3rem; border-radius: 50%; border: 1.5px solid color-mix(in srgb, var(--decor) 55%, transparent); opacity: 0; transform: scale(0.05); animation: he-ring 2.2s calc(1.72s + var(--i) * 0.4s) cubic-bezier(.2,.6,.3,1) forwards; }
+@keyframes he-ring { 0% { opacity: 0.9; transform: scale(0.05); } 100% { opacity: 0; transform: scale(1.6); } }
+/* 睡莲叶：一个压扁的圆，剪掉一道缺口，上面一个小花苞；涟漪到了就晃几下 */
+.he-pad { position: absolute; left: calc(50% + min(9rem, 26vw)); top: calc(var(--he-y) + 0.4rem); width: 3.2rem; height: 3.2rem; margin: -1.6rem 0 0 -1.6rem; opacity: 0; animation: bs-in 0.6s 0.4s forwards; }
+.he-pad-in { position: absolute; inset: 0; border-radius: 50%; background: color-mix(in srgb, var(--decor-2) 60%, var(--background)); -webkit-mask: conic-gradient(from 100deg, transparent 0 26deg, #000 26deg); mask: conic-gradient(from 100deg, transparent 0 26deg, #000 26deg); transform: scaleY(0.38); animation: he-bob 1.4s 2s ease-out forwards; }
+@keyframes he-bob { 0% { transform: scaleY(0.38) translateY(0); } 25% { transform: scaleY(0.38) translateY(-0.5rem) rotate(4deg); } 55% { transform: scaleY(0.38) translateY(0.25rem) rotate(-2deg); } 80% { transform: scaleY(0.38) translateY(-0.1rem); } 100% { transform: scaleY(0.38); } }
+.he-bloom { position: absolute; left: 50%; top: 50%; width: 0.8rem; height: 0.9rem; margin: -1rem 0 0 -0.4rem; border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%; background: color-mix(in srgb, #f2b38f 80%, var(--decor)); transform: scale(0); transform-origin: 50% 100%; animation: he-open 0.45s 2.45s cubic-bezier(.3,1.6,.5,1) forwards; }
+@keyframes he-open { to { transform: scale(1); } }
+
+/* 3. 书名：一个字一个字浮上来；水里一份淡淡的倒影，一晃一晃 */
+.he-title { position: absolute; left: 0; right: 0; top: calc(var(--he-y) - 6.4rem); display: block; text-align: center; font-size: clamp(1.4rem, 3.4vw, 2rem); font-weight: 300; line-height: 1.2; letter-spacing: 0.36em; text-indent: 0.36em; color: var(--foreground); }
+[data-lang="en"] .he-title { letter-spacing: 0.1em; text-indent: 0.1em; }
+.he-title .bs-ch { opacity: 0; transform: translateY(10px); animation: bs-rise 0.9s calc(1.95s + var(--i) * 0.09s) cubic-bezier(.2,.7,.2,1) forwards; }
+[data-lang="en"] .he-title .bs-ch { animation-delay: calc(1.95s + var(--i) * 0.04s); }
+.he-echo {
+  top: calc(var(--he-y) - 1.2rem);
+  transform: scaleY(-0.7);
+  transform-origin: 50% 0;
+  opacity: 0;
+  color: var(--decor);
+  -webkit-mask-image: linear-gradient(180deg, #000, transparent 90%), repeating-linear-gradient(180deg, #000 0 3px, transparent 3px 5px);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(180deg, #000, transparent 90%), repeating-linear-gradient(180deg, #000 0 3px, transparent 3px 5px);
+  mask-composite: intersect;
+  animation: he-echo 0.8s 2.6s ease forwards, he-wobble 2.4s 2.6s ease-in-out infinite;
+}
+@keyframes he-echo { to { opacity: 0.22; } }
+@keyframes he-wobble { 0%, 100% { transform: scaleY(-0.7) skewX(0deg); } 50% { transform: scaleY(-0.7) skewX(3deg) translateX(2px); } }
+
+@property --he-r { syntax: "<length>"; inherits: false; initial-value: 0px; }
+:root[data-look="heal"] .boot-screen[data-phase="leaving"] {
+  -webkit-mask-image: radial-gradient(circle at 50% 62%, transparent var(--he-r), #000 calc(var(--he-r) + 14vmax));
+  mask-image: radial-gradient(circle at 50% 62%, transparent var(--he-r), #000 calc(var(--he-r) + 14vmax));
+  animation: he-open-out 0.8s cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes he-open-out { from { --he-r: -14vmax; } to { --he-r: 130vmax; } }

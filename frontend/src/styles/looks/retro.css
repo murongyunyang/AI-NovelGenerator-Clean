@@ -1,0 +1,82 @@
+/* 复古风格：牛皮纸颗粒和暗角，顶栏下沿双线；按钮像盖章那样带一层错位实影，标题用仿宋，徽标是虚线圆戳。 */
+:root[data-look="retro"] {
+  --decor: #8c2f39;
+  --decor-2: #b08a3e;
+  --decor-tint: 10%;
+  --radius: 0.375rem;
+  --btn-radius: 0.375rem;
+  --app-font-display: "FangSong", "仿宋", "STFangsong", "Courier New", serif;
+  --panel-shadow: 3px 3px 0 color-mix(in srgb, #3b2a22 12%, transparent);
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .2 0 0 0 0 .12 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+:root[data-look="retro"].dark {
+  --decor: #d9826f;
+  --decor-2: #c9a65a;
+  --panel-shadow: 3px 3px 0 rgb(0 0 0 / 0.35);
+}
+
+:root[data-look="retro"] body::before {
+  background: radial-gradient(ellipse at 50% 45%, transparent 55%, color-mix(in srgb, var(--foreground) 10%, transparent)), var(--grain);
+}
+
+:root[data-look="retro"] .button--primary { box-shadow: 2px 2px 0 var(--foreground); }
+:root[data-look="retro"] .button--primary:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--foreground); }
+:root[data-look="retro"] .button--primary:is(:focus-visible, [data-focus-visible="true"]) { box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--decor); }
+:root[data-look="retro"] .hud-header { box-shadow: 0 3px 0 -1px var(--background), 0 4px 0 -1px color-mix(in srgb, var(--foreground) 35%, transparent); }
+:root[data-look="retro"] .nav-emblem { background: transparent; transform: rotate(-8deg); }
+:root[data-look="retro"] .nav-emblem::before { content: ""; inset: 0; border-radius: 50%; border: 1.5px dashed color-mix(in srgb, var(--decor) 70%, transparent); }
+:root[data-look="retro"] .nav-active::before { border-radius: 0; }
+
+/* ===== 部件：打字稿与索引卡 =====
+   卡片是索引卡：离左边 0.6rem 一道红色页边线，右下角折起一个角；书架面板同样折角；
+   次按钮像打字机键（下沿一道深色），输入框聚焦像在稿纸上划一道红线；标题前一个打字机敲出的“§”形小方块、标题用仿宋；
+   当前项左边一个红色小三角；分隔线是两道细线；书签页当前项顶边双线；书架里的书是牛皮纸档案袋，贴一张白标签。 */
+:root[data-look="retro"] {
+  --ui-thumb: color-mix(in srgb, var(--foreground) 35%, transparent);
+  --ui-sel: color-mix(in srgb, #3f5f9e 26%, transparent);
+  --ui-empty-ink: color-mix(in srgb, var(--decor) 45%, transparent);
+  --ui-empty-art: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 20' fill='none' stroke='black'%3E%3Crect x='9' y='2' width='22' height='16' rx='1.5' stroke-width='1.6'/%3E%3Crect x='11.5' y='4.5' width='17' height='11' stroke-width='1'/%3E%3Cpath d='M15 10 h10' stroke-width='1.6'/%3E%3C/svg%3E");
+  --re-fold: color-mix(in srgb, var(--foreground) 14%, var(--color-surface));
+}
+:root[data-look="retro"] :where(.rounded-2xl.bg-surface.border, .rounded-xl.bg-surface.border, .hud-panel) {
+  background-image:
+    linear-gradient(color-mix(in srgb, #c0392b 32%, transparent), color-mix(in srgb, #c0392b 32%, transparent)),
+    linear-gradient(315deg, var(--background) 0 0.7rem, var(--re-fold) 0.7rem 1.05rem, transparent 1.05rem);
+  background-size: 1px 100%, 1.6rem 1.6rem;
+  background-position: 0.6rem 0, 100% 100%;
+  background-repeat: no-repeat;
+}
+:root[data-look="retro"] .button--secondary { box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--foreground) 30%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--foreground) 14%, transparent); font-family: var(--app-font-display); }
+:root[data-look="retro"] .button--outline { border-color: color-mix(in srgb, var(--foreground) 30%, var(--color-border)); box-shadow: 2px 2px 0 color-mix(in srgb, var(--foreground) 15%, transparent); }
+:root[data-look="retro"] .button--outline:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 color-mix(in srgb, var(--foreground) 15%, transparent); }
+:root[data-look="retro"] :where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]), textarea, select):focus-visible {
+  border-color: color-mix(in srgb, var(--foreground) 40%, var(--color-border));
+  box-shadow: inset 0 -2px 0 var(--decor), 2px 2px 0 color-mix(in srgb, var(--foreground) 12%, transparent);
+}
+:root[data-look="retro"] :is(main section, .hud-panel) h2 { font-family: var(--app-font-display); letter-spacing: 0.01em; }
+:root[data-look="retro"] :is(main section, .hud-panel) h2::before {
+  content: "";
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-right: 0.5rem;
+  vertical-align: 0.1em;
+  border: 1.5px solid var(--decor);
+  box-shadow: 1.5px 1.5px 0 color-mix(in srgb, var(--decor) 35%, transparent);
+}
+:root[data-look="retro"] h1 { letter-spacing: 0.1em; }
+/* 当前项：竖条换成一个红色小三角（打字稿上的批注箭头） */
+:root[data-look="retro"] .nav-active::before { top: 50%; bottom: auto; width: 0.4rem; height: 0.6rem; margin-top: -0.3rem; background: var(--decor); clip-path: polygon(0 0, 100% 50%, 0 100%); }
+:root[data-look="retro"] .nav-active { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--foreground) 14%, transparent); }
+:root[data-look="retro"] .hud-edge-right { box-shadow: inset -1px 0 0 color-mix(in srgb, var(--foreground) 22%, transparent), inset -4px 0 0 transparent, inset -5px 0 0 color-mix(in srgb, var(--foreground) 12%, transparent); }
+:root[data-look="retro"] .hud-divider { height: 4px; background: linear-gradient(color-mix(in srgb, var(--foreground) 30%, transparent), color-mix(in srgb, var(--foreground) 30%, transparent)) 0 0 / 100% 1px no-repeat, linear-gradient(color-mix(in srgb, var(--foreground) 30%, transparent), color-mix(in srgb, var(--foreground) 30%, transparent)) 0 100% / 100% 1px no-repeat; }
+:root[data-look="retro"] [role="tab"].border-b-2[aria-selected="true"] { border-bottom-style: double; border-bottom-width: 3px; }
+:root[data-look="retro"] .aw-switch { border-radius: 0.25rem; }
+:root[data-look="retro"] .aw-switch button { border-radius: 0.2rem; font-family: var(--app-font-display); }
+:root[data-look="retro"] .aw-switch button[aria-selected="true"] { background: var(--color-surface-raised); box-shadow: 2px 2px 0 color-mix(in srgb, var(--foreground) 22%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--foreground) 22%, transparent); }
+:root[data-look="retro"] .book-tab { border-radius: 0.3rem 0.3rem 0 0; font-family: var(--app-font-display); }
+:root[data-look="retro"] .book-tab:is([data-active="true"], [aria-selected="true"]) { box-shadow: inset 0 2px 0 var(--decor), inset 0 4px 0 var(--background), inset 0 5px 0 color-mix(in srgb, var(--decor) 45%, transparent); }
+:root[data-look="retro"] .book-tab-dot { border-radius: 50%; background: transparent; box-shadow: inset 0 0 0 1.5px var(--decor); }
+/* 书架里的书：牛皮纸档案袋，上半贴一张白标签 */
+:root[data-look="retro"] .h-14.w-10.rounded-md.border.bg-surface { border-radius: 2px; background: linear-gradient(var(--color-surface-raised), var(--color-surface-raised)) 50% 22% / 70% 26% no-repeat, color-mix(in srgb, #b08a3e 28%, var(--color-surface)); }
+:root[data-look="retro"] .h-14.w-10.rounded-md.border.bg-surface svg { opacity: 0.35; }

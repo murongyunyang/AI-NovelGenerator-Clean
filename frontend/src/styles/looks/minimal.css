@@ -1,0 +1,66 @@
+/* 极简风格：没有背景装饰、没有阴影、直角；只有细线和一种蓝。 */
+:root[data-look="minimal"] {
+  --decor: #1f3fbf;
+  --decor-2: #111111;
+  --decor-tint: 0%;
+  --radius: 0.125rem;
+  --btn-radius: 0.125rem;
+  --panel-shadow: none;
+}
+:root[data-look="minimal"].dark {
+  --decor: #8ea4ff;
+  --decor-2: #f2f2f2;
+}
+
+:root[data-look="minimal"] .button--primary { box-shadow: none; }
+:root[data-look="minimal"] .nav-emblem { border-radius: 0; background: transparent; box-shadow: inset 0 0 0 1px var(--foreground); }
+:root[data-look="minimal"] .nav-active { box-shadow: none; }
+:root[data-look="minimal"] .nav-active::before { top: 0; bottom: 0; width: 2px; border-radius: 0; }
+
+/* ===== 部件：印刷样张 =====
+   背景是一套极淡的十二栏网格（只在留白处看得见）；卡片四角各两笔裁切线、直角；主按钮实心、描边按钮悬停反白；
+   输入框聚焦下沿一道蓝线；大标题后一个蓝色小方块；当前项加粗、左边一道黑线；选中的标签页反白；书签页当前项顶上一道蓝线。 */
+:root[data-look="minimal"] {
+  --ui-thumb: color-mix(in srgb, var(--foreground) 35%, transparent);
+  --ui-sel: color-mix(in srgb, var(--decor) 22%, transparent);
+  --ui-empty-ink: var(--decor);
+  --mn-crop: color-mix(in srgb, var(--foreground) 40%, transparent);
+}
+:root[data-look="minimal"] body::before {
+  background: repeating-linear-gradient(90deg, transparent 0 calc(100% / 12 - 1px), color-mix(in srgb, var(--foreground) 4%, transparent) calc(100% / 12 - 1px) calc(100% / 12));
+}
+:root[data-look="minimal"] .hud-header { box-shadow: 0 1px 0 var(--foreground); }
+:root[data-look="minimal"] :where(.rounded-2xl.bg-surface.border, .rounded-xl.bg-surface.border, .hud-panel) {
+  border-radius: 2px;
+  background-image:
+    linear-gradient(var(--mn-crop), var(--mn-crop)), linear-gradient(var(--mn-crop), var(--mn-crop)),
+    linear-gradient(var(--mn-crop), var(--mn-crop)), linear-gradient(var(--mn-crop), var(--mn-crop));
+  background-size: 0.6rem 1px, 1px 0.6rem, 0.6rem 1px, 1px 0.6rem;
+  background-position: 0.35rem 0.35rem, 0.35rem 0.35rem, calc(100% - 0.35rem) calc(100% - 0.35rem), calc(100% - 0.35rem) calc(100% - 0.35rem);
+  background-repeat: no-repeat;
+}
+:root[data-look="minimal"] :is(.button--secondary, .button--outline) { border-radius: 2px; }
+:root[data-look="minimal"] .button--outline { border-color: var(--foreground); }
+:root[data-look="minimal"] .button--outline:hover { background-color: var(--foreground); color: var(--background); }
+:root[data-look="minimal"] .button--secondary { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--foreground) 22%, transparent); }
+:root[data-look="minimal"] :where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]), textarea, select):focus-visible {
+  border-color: var(--foreground);
+  box-shadow: inset 0 -2px 0 var(--decor);
+}
+:root[data-look="minimal"] h1:not(.sr-only)::after { content: ""; display: inline-block; width: 0.32em; height: 0.32em; margin-left: 0.3em; vertical-align: 0.05em; background: var(--decor); }
+:root[data-look="minimal"] :is(main section, .hud-panel) h2 { letter-spacing: -0.01em; font-weight: 700; }
+:root[data-look="minimal"] .nav-active { font-weight: 600; background-image: none; }
+:root[data-look="minimal"] .nav-active::before { background: var(--foreground); }
+:root[data-look="minimal"] .hud-edge-right { box-shadow: inset -1px 0 0 var(--color-border); }
+:root[data-look="minimal"] .hud-divider { background: var(--color-border); }
+:root[data-look="minimal"] [role="tab"].border-b-2[aria-selected="true"] { border-bottom-color: var(--decor); font-weight: 600; }
+:root[data-look="minimal"] .aw-switch { border-radius: 2px; border-color: var(--foreground); }
+:root[data-look="minimal"] .aw-switch button { border-radius: 1px; }
+:root[data-look="minimal"] .aw-switch button[aria-selected="true"] { color: var(--background); background: var(--foreground); box-shadow: none; }
+:root[data-look="minimal"] .aw-switch button[aria-selected="true"] .aw-switch-count { color: inherit; }
+:root[data-look="minimal"] .book-tab { border-radius: 0; }
+:root[data-look="minimal"] .book-tab:is([data-active="true"], [aria-selected="true"]) { box-shadow: inset 0 2px 0 var(--decor); }
+:root[data-look="minimal"] .book-tab-dot { border-radius: 0; background: var(--decor); }
+/* 书架里的书：白封面，右下一个蓝色小方块 */
+:root[data-look="minimal"] .h-14.w-10.rounded-md.border.bg-surface { border-radius: 0; border-color: var(--foreground); background: linear-gradient(var(--decor), var(--decor)) calc(100% - 4px) calc(100% - 4px) / 6px 6px no-repeat, var(--color-surface); }
+:root[data-look="minimal"] .h-14.w-10.rounded-md.border.bg-surface svg { opacity: 0; }

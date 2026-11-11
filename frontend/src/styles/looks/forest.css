@@ -1,0 +1,73 @@
+/* 森林风格：右上角一片透过树冠的斜光，左下一层苔绿；徽标是一片叶子。 */
+:root[data-look="forest"] {
+  --decor: #6b8a4e;
+  --decor-2: #b39a5c;
+  --decor-tint: 16%;
+  --panel-shadow: 0 16px 36px -28px rgb(45 58 36 / 0.45);
+}
+:root[data-look="forest"].dark {
+  --decor: #99ad7a;
+  --decor-2: #c9b27a;
+  --panel-shadow: 0 16px 36px -26px rgb(0 0 0 / 0.6);
+}
+
+:root[data-look="forest"] body::before {
+  background:
+    radial-gradient(52rem 30rem at 100% -10%, color-mix(in srgb, var(--decor-2) 14%, transparent), transparent 70%),
+    radial-gradient(44rem 26rem at -6% 108%, color-mix(in srgb, var(--decor) 15%, transparent), transparent 70%);
+}
+:root[data-look="forest"] body::after {
+  background: repeating-linear-gradient(118deg, transparent 0 90px, color-mix(in srgb, var(--decor-2) 7%, transparent) 90px 130px);
+  -webkit-mask-image: radial-gradient(60rem 40rem at 92% 0%, #000, transparent 70%);
+  mask-image: radial-gradient(60rem 40rem at 92% 0%, #000, transparent 70%);
+}
+
+:root[data-look="forest"] .nav-emblem { border-radius: 70% 0 70% 0; background: color-mix(in srgb, var(--decor) 20%, transparent); }
+:root[data-look="forest"] .nav-active::before { border-radius: 3px; }
+
+/* ===== 部件：林间 =====
+   面板右上角落一片透过树冠的光斑，书架面板右下角一枝细枝；主按钮是叶片形（两角圆、两角尖）；
+   输入框聚焦是一圈苔绿，下沿加深；标题前一片小叶子；当前项的竖条换成一片叶子；书签页圆点也是叶子。 */
+:root[data-look="forest"] {
+  --ui-thumb: color-mix(in srgb, var(--decor) 50%, transparent);
+  --ui-sel: color-mix(in srgb, var(--decor) 26%, transparent);
+  --ui-empty-art: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 20'%3E%3Cpath d='M19 20 L19 9 L21 9 L21 20 Z'/%3E%3Cpath d='M20 10 C 14 10 10 6 10 2 C 16 2 20 5 20 10 Z'/%3E%3Cpath d='M20 12 C 26 12 31 8 31 3 C 24 3 20 7 20 12 Z'/%3E%3C/svg%3E");
+  --ui-corner-art: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Cpath d='M60 60 C 46 52 36 40 30 22' fill='none' stroke='black' stroke-width='2.5'/%3E%3Cpath d='M36 42 C 26 44 18 40 14 32 C 24 30 32 34 36 42 Z'/%3E%3Cpath d='M44 50 C 44 40 50 32 58 30 C 58 40 52 48 44 50 Z'/%3E%3Cpath d='M31 26 C 24 22 22 14 24 6 C 31 10 33 18 31 26 Z'/%3E%3C/svg%3E");
+  --ui-corner-ink: color-mix(in srgb, var(--decor) 16%, transparent);
+  --ui-corner-inset: auto 0.5rem 0.5rem auto;
+  --ui-corner-w: 7rem;
+  --ui-corner-h: 7rem;
+}
+:root[data-look="forest"] .hud-header { box-shadow: 0 1px 0 color-mix(in srgb, var(--decor) 26%, var(--color-border)); }
+:root[data-look="forest"] :where(.rounded-2xl.bg-surface.border, .rounded-xl.bg-surface.border) {
+  background-image: radial-gradient(18rem 7rem at 100% 0%, color-mix(in srgb, var(--decor-2) 9%, transparent), transparent 70%);
+}
+:root[data-look="forest"] .button--primary { border-radius: 0.9rem 0.25rem; box-shadow: inset 0 -2px 0 rgb(0 0 0 / 0.14), 0 2px 6px -3px color-mix(in srgb, var(--decor) 70%, transparent); }
+:root[data-look="forest"] :is(.button--secondary, .button--outline) { border-radius: 0.9rem 0.25rem; }
+:root[data-look="forest"] .button--outline:hover { background-color: color-mix(in srgb, var(--decor) 10%, transparent); }
+:root[data-look="forest"] :where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]), textarea, select):focus-visible {
+  border-color: color-mix(in srgb, var(--decor) 60%, var(--color-border));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--decor) 16%, transparent), inset 0 -2px 0 color-mix(in srgb, var(--decor) 55%, transparent);
+}
+:root[data-look="forest"] :is(main section, .hud-panel) h2::before {
+  content: "";
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.45rem;
+  margin-right: 0.5rem;
+  vertical-align: 0.1em;
+  border-radius: 0 100% 0 100%;
+  background: var(--decor);
+  transform: rotate(-18deg);
+}
+/* 当前项：一片小叶子代替竖条 */
+:root[data-look="forest"] .nav-active::before { top: 50%; bottom: auto; left: 0.2rem; width: 0.5rem; height: 0.8rem; margin-top: -0.4rem; border-radius: 0 100% 0 100%; transform: rotate(12deg); }
+:root[data-look="forest"] .nav-active { background-image: linear-gradient(90deg, color-mix(in srgb, var(--decor) 10%, transparent), transparent 80%); }
+:root[data-look="forest"] aside[data-sidebar-state] { background-image: linear-gradient(0deg, color-mix(in srgb, var(--decor) 9%, transparent), transparent 28%); }
+:root[data-look="forest"] .hud-divider { background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--decor) 45%, transparent) 30% 70%, transparent); }
+:root[data-look="forest"] [role="tab"].border-b-2[aria-selected="true"] { background-image: linear-gradient(0deg, color-mix(in srgb, var(--decor) 10%, transparent), transparent 70%); }
+:root[data-look="forest"] .aw-switch button[aria-selected="true"] { border-radius: 0.7rem 0.2rem; background: color-mix(in srgb, var(--decor) 15%, var(--color-surface)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--decor) 40%, transparent); }
+:root[data-look="forest"] .book-tab:is([data-active="true"], [aria-selected="true"]) { box-shadow: inset 0 2px 0 var(--decor); }
+:root[data-look="forest"] .book-tab-dot { width: 0.5rem; height: 0.7rem; border-radius: 0 100% 0 100%; background: var(--decor); }
+/* 书架里的书：书脊一道苔绿 */
+:root[data-look="forest"] .h-14.w-10.rounded-md.border.bg-surface { background: linear-gradient(90deg, color-mix(in srgb, var(--decor) 32%, var(--color-surface)) 0 5px, var(--color-surface) 5px); }

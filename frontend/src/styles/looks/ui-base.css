@@ -1,0 +1,74 @@
+/* ===== 各风格界面部件的共用机制 =====
+   这里只搭架子，具体长什么样由各风格在 <风格>.css 的“部件”一节设变量或写更具体的规则：
+   --ui-thumb    滚动条滑块颜色
+   --ui-sel      选中文字的底色
+   --ui-empty-art / --ui-empty-ink    空状态上方的小插画（SVG 遮罩）和它的颜色
+   --ui-corner-art / --ui-corner-ink / --ui-corner-inset / --ui-corner-w / --ui-corner-h    书架详情面板角落的装饰
+   所有装饰都不接收指针事件、压在文字下面，不挡输入和点击。本文件要在各风格文件之前载入（同优先级时后者覆盖前者）。 */
+:root[data-look] {
+  --ui-thumb: color-mix(in srgb, var(--decor) 45%, transparent);
+  --ui-sel: color-mix(in srgb, var(--decor) 28%, transparent);
+  --ui-empty-ink: color-mix(in srgb, var(--decor) 50%, transparent);
+  --ui-empty-art: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 20'%3E%3Crect x='16' y='6' width='8' height='8'/%3E%3C/svg%3E");
+  --ui-corner-art: var(--ui-empty-art);
+  --ui-corner-ink: color-mix(in srgb, var(--decor) 14%, transparent);
+  --ui-corner-inset: auto 1rem 1rem auto;
+  --ui-corner-w: 8rem;
+  --ui-corner-h: 3rem;
+  scrollbar-color: var(--ui-thumb) transparent;
+}
+/* 工作区滚动区平时隐藏滚动条，悬停或键盘聚焦时才显示（沿用 globals.css 的做法），只换颜色。 */
+:root[data-look] .workspace-scrollbar:is(:hover, :focus-within) { scrollbar-color: var(--ui-thumb) transparent; }
+:root[data-look] ::selection { background: var(--ui-sel); }
+
+/* 空状态：虚线框里的“暂无……”提示。上方留白里放一个小插画（只给上下留白够大的那几种，不压文字），报错提示不加。 */
+:root[data-look] .border-dashed.text-center:is(.py-10, .py-12, .py-14):not([role="alert"]) { position: relative; }
+:root[data-look] .border-dashed.text-center:is(.py-10, .py-12, .py-14):not([role="alert"])::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0.65rem;
+  width: 2.8rem;
+  height: 1.4rem;
+  margin-left: -1.4rem;
+  background: var(--ui-empty-ink);
+  -webkit-mask: var(--ui-empty-art) center / contain no-repeat;
+  mask: var(--ui-empty-art) center / contain no-repeat;
+  pointer-events: none;
+}
+/* 书架右侧“选择左侧小说”的空白页：书本图标换成风格的点缀色。 */
+:root[data-look] .hud-panel .text-center.text-muted > svg { color: var(--decor); opacity: 0.55; }
+
+/* 书架详情面板角落的装饰：压在内容下面（面板自成层叠上下文，装饰 z-index:-1 只在面板底色之上）。
+   科技、复古、极简用自己的写法（刻线、折角、裁切线），不走这里。 */
+:root[data-look] .hud-panel { isolation: isolate; }
+:root:is([data-look="mist"], [data-look="forest"], [data-look="warm"], [data-look="cute"], [data-look="casual"], [data-look="sunny"], [data-look="heal"], [data-look="ink"]) .hud-panel::after {
+  content: "";
+  position: absolute;
+  inset: var(--ui-corner-inset);
+  z-index: -1;
+  width: var(--ui-corner-w);
+  height: var(--ui-corner-h);
+  background: var(--ui-corner-ink);
+  -webkit-mask: var(--ui-corner-art) center / contain no-repeat;
+  mask: var(--ui-corner-art) center / contain no-repeat;
+  pointer-events: none;
+}
+
+/* 各风格给 .aw-switch 的运行中小圆点、顶栏书签页圆点去掉发光（发光只留给科技风格）。 */
+:root[data-look]:not([data-look="tech"]) .aw-switch-dot { box-shadow: none; }
+
+/* 侧栏当前项的文字：强调色往正文色靠一点。各风格给当前项加了淡淡的底色（雾带、荧光笔、暖光……），
+   纯强调色在上面会掉到 4.5:1 以下；混入 35% 正文色后各风格日夜都在 4.5 以上（见 checks.py）。 */
+:root[data-look] .nav-active.text-accent { color: color-mix(in srgb, var(--color-accent) 65%, var(--foreground)); }
+
+/* 减少动态效果：部件上新加的小循环动画一律停下。 */
+@media (prefers-reduced-motion: reduce) {
+  :root[data-look] .hud-panel::after,
+  :root[data-look] .border-dashed.text-center::before,
+  :root[data-look] .book-tab::before,
+  :root[data-look] .book-tab-dot,
+  :root[data-look] .nav-active::before,
+  :root[data-look] .hud-header::before,
+  :root[data-look] .hud-header::after { animation: none !important; }
+}

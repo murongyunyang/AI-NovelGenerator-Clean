@@ -1,0 +1,100 @@
+/* 暖棕：书房。三段。
+   1. 屋里有点暗，一盏吊灯从上面垂下来、晃两下停稳，“咔哒”一声拉亮：灯泡亮起，一束暖光照到桌上，屋里跟着亮了（0–1 秒）；
+   2. 一本精装书落进灯下那片光里，封面烫金边框一笔描出来，两枚菱形花饰显出，书签丝带垂下；
+   3. 封面沿书脊翻开，扉页上一个字一个字浮出书名，下面是“第一章”和三道横线。
+   退场：镜头推进那一页，整层淡出。 */
+[data-scene="warm"] {
+  --wa-w: min(15rem, 42vw);
+  --wa-h: calc(var(--wa-w) * 1.38);
+  --wa-cover: color-mix(in srgb, var(--color-accent) 72%, #2a1a0e);
+  --wa-gold: color-mix(in srgb, var(--decor-2) 75%, #f4e2b8);
+  --wa-light: color-mix(in srgb, #ffd9a0 55%, transparent);
+  --wa-room: #3a2a1a;
+  --wa-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun", serif;
+  /* 灯罩下沿到画面顶的距离；书的上沿离灯罩下沿 2.5rem */
+  --wa-lamp: calc(50% - var(--wa-h) / 2 - 2.5rem);
+  background: radial-gradient(40rem 26rem at 50% 50%, color-mix(in srgb, var(--decor-2) 14%, transparent), transparent 70%), var(--background);
+}
+.dark [data-scene="warm"] { --wa-cover: color-mix(in srgb, var(--color-accent) 45%, #1a120b); --wa-light: color-mix(in srgb, #ffc47a 22%, transparent); --wa-room: #000; }
+
+/* 1. 灯没亮时屋里暗一层；拉亮后只在四角留一点暗 */
+.wa-dim { position: absolute; inset: 0; background: color-mix(in srgb, var(--wa-room) 34%, transparent); animation: wa-lit 0.5s 0.55s ease-out forwards; }
+.wa-dim::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 65% at 50% 46%, transparent 55%, color-mix(in srgb, var(--wa-room) 14%, transparent)); }
+@keyframes wa-lit { to { background-color: transparent; } }
+
+.wa-lamp { position: absolute; left: 50%; top: 0; width: 5.6rem; height: var(--wa-lamp); margin-left: -2.8rem; transform-origin: 50% 0; transform: translateY(-100%); animation: wa-hang 0.55s cubic-bezier(.3,.8,.3,1) forwards, wa-swing 1.6s 0.55s ease-out forwards; }
+@keyframes wa-hang { to { transform: translateY(0); } }
+/* 停稳前左右晃两下，越晃越小 */
+@keyframes wa-swing { 0% { transform: rotate(0deg); } 20% { transform: rotate(3.5deg); } 45% { transform: rotate(-2deg); } 70% { transform: rotate(0.8deg); } 100% { transform: rotate(0deg); } }
+.wa-cord { position: absolute; left: 50%; top: 0; bottom: 1.9rem; width: 1.5px; margin-left: -0.75px; background: color-mix(in srgb, var(--foreground) 45%, transparent); }
+.wa-shade { position: absolute; left: 0; right: 0; bottom: 0; height: 2rem; background: color-mix(in srgb, var(--color-accent) 55%, #2a1a0e); clip-path: polygon(32% 0, 68% 0, 100% 100%, 0 100%); }
+.wa-bulb { position: absolute; left: 50%; bottom: -0.55rem; width: 1.3rem; height: 0.65rem; margin-left: -0.65rem; border-radius: 0 0 0.65rem 0.65rem; background: color-mix(in srgb, var(--foreground) 22%, var(--background)); animation: wa-bulb 0.15s 0.55s steps(1) forwards; }
+@keyframes wa-bulb { to { background: #ffe2a8; } }
+
+/* 灯光：挂在灯上，从灯罩下沿往下张开的梯形，所以会跟着灯一起晃 */
+.wa-cone {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: calc(var(--wa-w) * 2.6);
+  height: calc(var(--wa-h) + 4rem);
+  margin-left: calc(var(--wa-w) * -1.3);
+  background: linear-gradient(180deg, var(--wa-light), transparent 92%);
+  clip-path: polygon(calc(50% - 2.8rem) 0, calc(50% + 2.8rem) 0, 100% 100%, 0 100%);
+  opacity: 0;
+  animation: wa-light 0.35s 0.55s ease-out forwards;
+}
+@keyframes wa-light { 0% { opacity: 0; } 40% { opacity: 1; } 60% { opacity: 0.75; } 100% { opacity: 1; } }
+/* 桌上那片光 */
+.wa-pool { position: absolute; left: 50%; top: calc(50% + var(--wa-h) / 2 - 1.2rem); width: calc(var(--wa-w) * 2.8); height: 3rem; margin-left: calc(var(--wa-w) * -1.4); border-radius: 50%; background: radial-gradient(closest-side, var(--wa-light), transparent); opacity: 0; animation: bs-in 0.4s 0.6s forwards; }
+
+/* 2. 书：落进那片光里，压一下 */
+.wa-book { position: absolute; left: 50%; top: 50%; width: var(--wa-w); height: var(--wa-h); margin: calc(var(--wa-h) / -2) 0 0 calc(var(--wa-w) / -2); opacity: 0; transform: translateY(-40px) scale(1.06); animation: wa-drop 0.6s 0.75s cubic-bezier(.3,.8,.3,1) forwards; }
+@keyframes wa-drop { 0% { opacity: 0; transform: translateY(-40px) scale(1.06); } 70% { opacity: 1; transform: translateY(2px) scale(0.995); } 100% { opacity: 1; transform: none; } }
+.wa-shift { position: absolute; inset: 0; transform-style: preserve-3d; animation: wa-center 0.8s 1.9s cubic-bezier(.4,0,.2,1) forwards; }
+@keyframes wa-center { to { transform: translateX(calc(var(--wa-w) / 2)); } }
+
+.wa-page {
+  position: absolute;
+  inset: 3px 3px 3px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 22% 1rem 0;
+  border-radius: 0 6px 6px 0;
+  background: color-mix(in srgb, var(--color-surface-raised) 88%, #f6ecd8);
+  box-shadow: 0 18px 40px -18px rgb(0 0 0 / 0.45);
+}
+.dark [data-scene="warm"] .wa-page { background-color: color-mix(in srgb, var(--color-surface-raised) 70%, #3a2c1e); }
+/* 3. 扉页：书名逐字浮出，章名、三道横线 */
+.wa-title { display: block; text-align: center; font: 700 clamp(0.95rem, 2.4vw, 1.3rem)/1.5 var(--wa-serif); letter-spacing: 0.14em; color: var(--foreground); }
+[data-lang="en"] .wa-title { letter-spacing: 0.02em; font-size: clamp(0.85rem, 2vw, 1.1rem); }
+.wa-title .bs-ch { opacity: 0; transform: translateY(6px); animation: bs-rise 0.45s calc(2.45s + var(--i) * 0.08s) ease-out forwards; }
+[data-lang="en"] .wa-title .bs-ch { animation-delay: calc(2.45s + var(--i) * 0.03s); }
+.wa-chapter { margin-top: 1.1rem; font: 600 0.85rem/1 var(--wa-serif); letter-spacing: 0.3em; text-indent: 0.3em; color: var(--color-muted); opacity: 0; animation: bs-in 0.4s 2.95s forwards; }
+.wa-rule { width: 78%; height: 1px; margin-top: 1.1rem; background: color-mix(in srgb, var(--foreground) 14%, transparent); transform: scaleX(0); transform-origin: 0 50%; animation: bs-rise 0.35s calc(3s + var(--i) * 0.08s) ease-out forwards; }
+.wa-rule:first-of-type { margin-top: 1.4rem; }
+.wa-rule:last-child { width: 52%; align-self: flex-start; margin-left: 11%; }
+
+/* 封面：烫金边框一笔描出来，上下两枚菱形花饰；翻开时绕书脊转过去 */
+.wa-cover { position: absolute; inset: 0; transform-origin: 0 50%; transform-style: preserve-3d; animation: wa-open 0.9s 1.9s cubic-bezier(.45,0,.2,1) forwards; }
+@keyframes wa-open { from { transform: perspective(1600px) rotateY(0deg); } to { transform: perspective(1600px) rotateY(-178deg); } }
+.wa-front, .wa-inside { position: absolute; inset: 0; border-radius: 3px 8px 8px 3px; backface-visibility: hidden; }
+.wa-front {
+  background: linear-gradient(90deg, rgb(0 0 0 / 0.28), transparent 7%, transparent 93%, rgb(255 255 255 / 0.06)), var(--wa-cover);
+  box-shadow: 0 22px 44px -20px rgb(0 0 0 / 0.6);
+}
+.wa-inside { transform: rotateY(180deg); background: color-mix(in srgb, var(--wa-cover) 55%, var(--background)); }
+.wa-frame { position: absolute; inset: 0.8rem 0.8rem 0.8rem 1.1rem; border: 1px solid var(--wa-gold); border-radius: 2px; clip-path: inset(0 100% 100% 0); animation: wa-frame 0.7s 1.15s cubic-bezier(.6,0,.3,1) forwards; }
+.wa-frame::after { content: ""; position: absolute; inset: 0.35rem; border: 1px solid color-mix(in srgb, var(--wa-gold) 55%, transparent); border-radius: 1px; }
+@keyframes wa-frame { 50% { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
+.wa-orn { position: absolute; left: 50%; top: 40%; width: 0.9rem; height: 0.9rem; margin: -0.45rem 0 0 -0.3rem; border: 1px solid var(--wa-gold); transform: rotate(45deg) scale(0); animation: wa-orn 0.4s 1.55s ease forwards; }
+.wa-orn::after { content: ""; position: absolute; inset: 0.2rem; background: var(--wa-gold); }
+.wa-orn-2 { top: 72%; width: 0.5rem; height: 0.5rem; margin: -0.25rem 0 0 -0.1rem; animation-delay: 1.65s; }
+.wa-orn-2::after { inset: 0.12rem; }
+@keyframes wa-orn { to { transform: rotate(45deg) scale(1); } }
+.wa-ribbon { position: absolute; right: 26%; bottom: -1.6rem; width: 0.7rem; height: 2.4rem; background: var(--decor); clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%); transform: translateZ(1px) scaleY(0); transform-origin: 50% 0; animation: wa-ribbon 0.5s 1.65s cubic-bezier(.3,1.4,.5,1) forwards; }
+@keyframes wa-ribbon { to { transform: translateZ(1px) scaleY(1); } }
+
+:root[data-look="warm"] .boot-screen[data-phase="leaving"] { transform-origin: calc(50% + min(15rem, 42vw) / 2) 46%; animation: wa-leave 0.8s cubic-bezier(.6,0,.4,1) forwards; }
+@keyframes wa-leave { to { opacity: 0; transform: scale(2.2); } }

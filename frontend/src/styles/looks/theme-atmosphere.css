@@ -1,0 +1,271 @@
+/* ===== 主题氛围增强 =====
+   这一层只负责留白里的轻微气氛，不改变面板和文字的对比度。
+   AmbientLayer 的 i 是原有粒子，b 是新增的光晕/纸屑/星点；每个主题同时给日间和夜间一套低饱和颜色。
+   所有动作都只用 opacity、transform 和 background-position，后台与减少动态效果时会停下。 */
+
+.ambient {
+  isolation: isolate;
+}
+
+.ambient::before,
+.ambient::after {
+  content: "";
+  position: absolute;
+  inset: -8%;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 0;
+  will-change: transform, opacity, background-position;
+}
+
+.ambient::before {
+  background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--decor) 12%, transparent), transparent 65%);
+  animation: atmo-breathe 16s ease-in-out infinite alternate;
+}
+
+.ambient::after {
+  background: linear-gradient(110deg, transparent 20%, color-mix(in srgb, var(--decor) 8%, transparent) 50%, transparent 80%);
+  background-size: 220% 100%;
+  animation: atmo-sweep 24s ease-in-out infinite;
+}
+
+.ambient > b {
+  --atmo-color: var(--decor);
+  position: absolute;
+  z-index: 1;
+  display: block;
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.ambient > b:nth-of-type(1) { left: 11%; top: 23%; }
+.ambient > b:nth-of-type(2) { left: 78%; top: 17%; }
+.ambient > b:nth-of-type(3) { left: 68%; top: 76%; }
+.ambient > b:nth-of-type(4) { left: 27%; top: 82%; }
+
+/* 科技：扫描波、HUD 十字和两枚缓慢呼吸的能量节点。 */
+:root[data-look="tech"] .ambient::before {
+  opacity: .52;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--decor) 7%, transparent), transparent 32%),
+    repeating-linear-gradient(0deg, transparent 0 38px, color-mix(in srgb, var(--decor) 5%, transparent) 39px 40px);
+  animation: atmo-scan 12s linear infinite;
+}
+:root[data-look="tech"] .ambient::after {
+  opacity: .45;
+  background: radial-gradient(circle at 18% 30%, color-mix(in srgb, var(--decor) 18%, transparent), transparent 12rem),
+    radial-gradient(circle at 84% 72%, color-mix(in srgb, var(--decor-2) 16%, transparent), transparent 15rem);
+  animation: atmo-breathe 11s ease-in-out infinite alternate-reverse;
+}
+:root[data-look="tech"] .ambient > b {
+  width: 1rem; height: 1rem;
+  border: 1px solid color-mix(in srgb, var(--atmo-color) 60%, transparent);
+  background: linear-gradient(90deg, transparent 46%, var(--atmo-color) 47% 53%, transparent 54%),
+    linear-gradient(0deg, transparent 46%, var(--atmo-color) 47% 53%, transparent 54%);
+  animation: atmo-node 5s calc(var(--i, 0) * -1.2s) ease-in-out infinite;
+}
+:root[data-look="tech"] .ambient > b:nth-of-type(2),
+:root[data-look="tech"] .ambient > b:nth-of-type(4) { --atmo-color: var(--decor-2); }
+
+/* 雾蓝：远处的雾层与月光/晨光，夜间增加一圈冷月晕。 */
+:root[data-look="mist"] .ambient::before {
+  opacity: .72;
+  inset: 20% -12% -5%;
+  background: radial-gradient(ellipse at 50% 100%, color-mix(in srgb, var(--decor) 16%, transparent), transparent 58%),
+    linear-gradient(180deg, transparent 28%, color-mix(in srgb, var(--decor-2) 10%, transparent));
+  animation: atmo-fog-drift 28s ease-in-out infinite alternate;
+}
+:root[data-look="mist"] .ambient::after {
+  opacity: .6;
+  background: radial-gradient(circle at 72% 18%, color-mix(in srgb, var(--decor-2) 18%, transparent), transparent 9rem);
+  animation: atmo-moon 12s ease-in-out infinite alternate;
+}
+:root[data-look="mist"] .ambient > b {
+  width: 8rem; height: 2.4rem; border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--atmo-color) 16%, transparent), transparent);
+  filter: blur(5px);
+  animation: atmo-fog-drift 19s calc(var(--i, 0) * -3s) ease-in-out infinite alternate;
+}
+:root[data-look="mist"].dark .ambient > b { --atmo-color: #cfe5ff; }
+
+/* 森林：树冠斑驳光影；夜间粒子变成缓慢呼吸的萤火。 */
+:root[data-look="forest"] .ambient::before {
+  opacity: .62;
+  background: radial-gradient(ellipse at 10% -10%, color-mix(in srgb, var(--decor-2) 18%, transparent), transparent 42%),
+    radial-gradient(ellipse at 92% 12%, color-mix(in srgb, var(--decor) 14%, transparent), transparent 44%);
+  animation: atmo-canopy 18s ease-in-out infinite alternate;
+}
+:root[data-look="forest"] .ambient::after {
+  opacity: .38;
+  background: radial-gradient(circle at 32% 18%, color-mix(in srgb, var(--decor-2) 18%, transparent), transparent 5rem),
+    radial-gradient(circle at 72% 28%, color-mix(in srgb, var(--decor-2) 13%, transparent), transparent 6rem);
+  animation: atmo-dapple 9s ease-in-out infinite alternate;
+}
+:root[data-look="forest"] .ambient > b {
+  width: .65rem; height: 1.15rem;
+  border-radius: 100% 0 100% 0;
+  background: color-mix(in srgb, var(--atmo-color) 60%, transparent);
+  animation: atmo-leaf-sway 8s calc(var(--i, 0) * -1.8s) ease-in-out infinite;
+}
+:root[data-look="forest"].dark .ambient > b {
+  width: .35rem; height: .35rem; border-radius: 50%;
+  background: #d8efae; box-shadow: 0 0 12px #bfe783;
+  animation-name: atmo-firefly;
+}
+
+/* 暖棕：纸张纹理与灯下浮尘；夜间灯晕更集中。 */
+:root[data-look="warm"] .ambient::before {
+  opacity: .52;
+  background: repeating-linear-gradient(0deg, color-mix(in srgb, var(--foreground) 2%, transparent) 0 1px, transparent 1px 5px),
+    radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--decor-2) 14%, transparent), transparent 58%);
+  animation: atmo-paper 18s linear infinite;
+}
+:root[data-look="warm"] .ambient::after {
+  opacity: .52;
+  background: radial-gradient(circle at 70% 12%, color-mix(in srgb, var(--decor-2) 18%, transparent), transparent 13rem);
+  animation: atmo-lamp 10s ease-in-out infinite alternate;
+}
+:root[data-look="warm"] .ambient > b {
+  width: 3px; height: 3px; border-radius: 50%;
+  background: color-mix(in srgb, var(--atmo-color) 68%, transparent);
+  animation: atmo-mote 8s calc(var(--i, 0) * -1.4s) ease-in-out infinite;
+}
+
+/* 可爱：四角的星屑/泡泡形成轻微的漂浮边框，夜间换成月光色。 */
+:root[data-look="cute"] .ambient::before {
+  opacity: .55;
+  background: radial-gradient(circle at 16% 18%, color-mix(in srgb, var(--decor-2) 16%, transparent), transparent 7rem),
+    radial-gradient(circle at 84% 82%, color-mix(in srgb, var(--decor) 14%, transparent), transparent 8rem);
+  animation: atmo-breathe 12s ease-in-out infinite alternate;
+}
+:root[data-look="cute"] .ambient > b {
+  width: .65rem; height: .65rem; border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--atmo-color) 56%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--atmo-color) 10%, transparent);
+  animation: atmo-bubble 8s calc(var(--i, 0) * -1.7s) ease-in-out infinite;
+}
+:root[data-look="cute"] .ambient > b:nth-of-type(2n) { --atmo-color: var(--decor-2); }
+
+/* 休闲：纸张光泽、风吹纸屑和手绘弧线。 */
+:root[data-look="casual"] .ambient::before {
+  opacity: .45;
+  background: repeating-linear-gradient(8deg, transparent 0 42px, color-mix(in srgb, var(--foreground) 3%, transparent) 43px 44px);
+  animation: atmo-paper 24s linear infinite;
+}
+:root[data-look="casual"] .ambient > b {
+  width: 2.2rem; height: .28rem; border-radius: 99px;
+  background: var(--atmo-color);
+  transform: rotate(calc((var(--i, 0) - 2) * 9deg));
+  animation: atmo-confetti 11s calc(var(--i, 0) * -2s) ease-in-out infinite;
+}
+:root[data-look="casual"] .ambient > b:nth-of-type(2n) { --atmo-color: var(--decor-2); }
+
+/* 阳光：暖色光束和会呼吸的日晕，夜间把光束压低成晚霞。 */
+:root[data-look="sunny"] .ambient::before {
+  opacity: .62;
+  background: conic-gradient(from 215deg at 15% 8%, color-mix(in srgb, var(--decor-2) 16%, transparent), transparent 18%, transparent 48%, color-mix(in srgb, var(--decor) 8%, transparent), transparent 64%);
+  animation: atmo-sunbeam 15s ease-in-out infinite alternate;
+}
+:root[data-look="sunny"] .ambient::after {
+  opacity: .52;
+  background: radial-gradient(circle at 14% 12%, color-mix(in srgb, var(--decor-2) 22%, transparent), transparent 11rem);
+  animation: atmo-sun 9s ease-in-out infinite alternate;
+}
+:root[data-look="sunny"] .ambient > b {
+  width: .38rem; height: .38rem; border-radius: 50%;
+  background: color-mix(in srgb, var(--atmo-color) 65%, transparent);
+  animation: atmo-dust 9s calc(var(--i, 0) * -1.3s) ease-in-out infinite;
+}
+
+/* 治愈：柔和的呼吸光斑和水面小环。 */
+:root[data-look="heal"] .ambient::before {
+  opacity: .62;
+  background: radial-gradient(circle at 18% 26%, color-mix(in srgb, var(--decor-2) 15%, transparent), transparent 11rem),
+    radial-gradient(circle at 80% 78%, color-mix(in srgb, var(--decor) 12%, transparent), transparent 14rem);
+  animation: atmo-breathe 14s ease-in-out infinite alternate;
+}
+:root[data-look="heal"] .ambient > b {
+  width: 5rem; height: 1.35rem; border: 1px solid color-mix(in srgb, var(--atmo-color) 28%, transparent); border-radius: 50%;
+  animation: atmo-ripple 9s calc(var(--i, 0) * -2s) ease-out infinite;
+}
+:root[data-look="heal"] .ambient > b:nth-of-type(2n) { --atmo-color: var(--decor-2); }
+
+/* 水墨：轻微纸纤维与墨晕；夜间仍保留纸面呼吸，不使用刺眼亮白。 */
+:root[data-look="ink"] .ambient::before {
+  opacity: .42;
+  background: repeating-linear-gradient(92deg, transparent 0 7px, color-mix(in srgb, var(--foreground) 4%, transparent) 8px, transparent 9px);
+  animation: atmo-paper 30s linear infinite;
+}
+:root[data-look="ink"] .ambient::after {
+  opacity: .46;
+  background: radial-gradient(ellipse at 84% 14%, color-mix(in srgb, var(--foreground) 8%, transparent), transparent 14rem);
+  animation: atmo-ink-wash 18s ease-in-out infinite alternate;
+}
+:root[data-look="ink"] .ambient > b {
+  width: 4.5rem; height: 3rem; border-radius: 48% 52% 45% 55%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--foreground) 9%, transparent), transparent 72%);
+  filter: blur(2px);
+  animation: atmo-ink-wash 15s calc(var(--i, 0) * -2s) ease-in-out infinite alternate;
+}
+
+/* 复古：胶片颗粒、扫描划痕和角落暖光。 */
+:root[data-look="retro"] .ambient::before {
+  opacity: .34;
+  background: repeating-linear-gradient(90deg, transparent 0 28px, color-mix(in srgb, var(--foreground) 5%, transparent) 29px 30px);
+  animation: atmo-film 6s steps(5) infinite;
+}
+:root[data-look="retro"] .ambient::after {
+  opacity: .48;
+  background: radial-gradient(ellipse at 50% -4%, color-mix(in srgb, var(--decor-2) 17%, transparent), transparent 58%);
+  animation: atmo-lamp 12s ease-in-out infinite alternate;
+}
+:root[data-look="retro"] .ambient > b {
+  width: 1px; height: 5.5rem; background: color-mix(in srgb, var(--foreground) 24%, transparent);
+  transform: rotate(calc((var(--i, 0) - 2) * 7deg));
+  animation: atmo-scratch 7s calc(var(--i, 0) * -1.6s) ease-in-out infinite;
+}
+
+/* 极简：只加印刷校准线和一枚缓慢移动的蓝点，保持克制。 */
+:root[data-look="minimal"] .ambient::before {
+  opacity: .42;
+  background: linear-gradient(90deg, transparent 0 14%, color-mix(in srgb, var(--foreground) 6%, transparent) 14% 14.1%, transparent 14.1% 86%, color-mix(in srgb, var(--foreground) 6%, transparent) 86% 86.1%, transparent 86.1%),
+    linear-gradient(0deg, transparent 0 18%, color-mix(in srgb, var(--foreground) 5%, transparent) 18% 18.1%, transparent 18.1% 82%, color-mix(in srgb, var(--foreground) 5%, transparent) 82% 82.1%, transparent 82.1%);
+}
+:root[data-look="minimal"] .ambient::after { opacity: .5; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--decor) 13%, transparent), transparent); animation: atmo-guide 16s linear infinite; }
+:root[data-look="minimal"] .ambient > b { width: 4px; height: 4px; background: var(--decor); animation: atmo-minimal-dot 12s linear infinite; }
+:root[data-look="minimal"] .ambient > b:nth-of-type(n+2) { display: none; }
+
+@keyframes atmo-breathe { from { transform: scale(.98); opacity: .42; } to { transform: scale(1.04); opacity: .78; } }
+@keyframes atmo-sweep { 0%, 100% { background-position: 140% 0; opacity: .2; } 50% { background-position: -40% 0; opacity: .6; } }
+@keyframes atmo-scan { from { transform: translateY(-2%); } to { transform: translateY(8%); } }
+@keyframes atmo-node { 0%, 100% { opacity: .18; transform: scale(.7) rotate(0); } 50% { opacity: .8; transform: scale(1) rotate(45deg); } }
+@keyframes atmo-fog-drift { from { transform: translateX(-3vw); } to { transform: translateX(4vw); } }
+@keyframes atmo-moon { from { transform: scale(.9); opacity: .3; } to { transform: scale(1.08); opacity: .8; } }
+@keyframes atmo-canopy { to { transform: translate3d(1%, 2%, 0) scale(1.04); } }
+@keyframes atmo-dapple { 0%, 100% { transform: translate(0, 0); opacity: .25; } 50% { transform: translate(2%, 3%); opacity: .7; } }
+@keyframes atmo-leaf-sway { 0%, 100% { opacity: 0; transform: translateY(-.8rem) rotate(-18deg); } 18%, 78% { opacity: .7; } 50% { transform: translate(1rem, 1.2rem) rotate(36deg); } }
+@keyframes atmo-firefly { 0%, 100% { opacity: .08; transform: translate(0, 0) scale(.6); } 45%, 60% { opacity: .9; transform: translate(1rem, -1rem) scale(1); } }
+@keyframes atmo-paper { to { background-position: 0 52px; } }
+@keyframes atmo-lamp { from { transform: scale(.94); } to { transform: scale(1.08); } }
+@keyframes atmo-mote { 0%, 100% { opacity: 0; transform: translate(0, 1rem); } 30%, 70% { opacity: .8; } 50% { transform: translate(-1rem, -2rem); } }
+@keyframes atmo-bubble { 0%, 100% { opacity: 0; transform: translate(0, 1rem) scale(.6); } 35%, 70% { opacity: .75; } 60% { transform: translate(1rem, -2rem) scale(1); } }
+@keyframes atmo-confetti { 0%, 100% { opacity: 0; transform: translate(-1rem, -1rem) rotate(-12deg); } 35%, 70% { opacity: .7; } 60% { transform: translate(2rem, 3rem) rotate(18deg); } }
+@keyframes atmo-sunbeam { from { transform: rotate(-1deg) scale(1); } to { transform: rotate(3deg) scale(1.04); } }
+@keyframes atmo-sun { from { transform: scale(.9); } to { transform: scale(1.1); } }
+@keyframes atmo-dust { 0%, 100% { opacity: 0; transform: translate(0, 1rem); } 35%, 75% { opacity: .7; } 60% { transform: translate(2rem, -2rem); } }
+@keyframes atmo-ripple { 0% { opacity: 0; transform: scale(.4); } 20% { opacity: .65; } 100% { opacity: 0; transform: scale(1.8); } }
+@keyframes atmo-ink-wash { from { transform: scale(.88) rotate(-3deg); } to { transform: scale(1.12) rotate(4deg); } }
+@keyframes atmo-film { 0%, 100% { transform: translateX(0); opacity: .25; } 50% { transform: translateX(1.5%); opacity: .55; } }
+@keyframes atmo-scratch { 0%, 100% { opacity: 0; transform: translateY(-2rem) rotate(7deg); } 35%, 70% { opacity: .5; } 60% { transform: translateY(2rem) rotate(-7deg); } }
+@keyframes atmo-guide { from { background-position: -120% 0; } to { background-position: 120% 0; } }
+@keyframes atmo-minimal-dot { 0%, 100% { opacity: .15; transform: translateX(0); } 50% { opacity: .8; transform: translateX(70vw); } }
+
+:root[data-hidden="true"] .ambient::before,
+:root[data-hidden="true"] .ambient::after,
+:root[data-hidden="true"] .ambient > b { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient::before,
+  .ambient::after,
+  .ambient > b { animation: none !important; }
+  .ambient > b { opacity: .2; }
+}

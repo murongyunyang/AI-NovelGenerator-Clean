@@ -1,0 +1,77 @@
+/* 休闲风格：手账本那样的点阵底，底边一道很淡的海浪；顶栏下沿是虚线，徽标微微歪着。 */
+:root[data-look="casual"] {
+  --decor: #1e8a8f;
+  --decor-2: #e8735a;
+  --decor-tint: 16%;
+  --radius: 0.625rem;
+  --btn-radius: 0.625rem;
+  --panel-shadow: 0 10px 26px -22px rgb(23 76 79 / 0.45);
+}
+:root[data-look="casual"].dark {
+  --decor: #4fc2c0;
+  --decor-2: #f0907a;
+  --panel-shadow: 0 10px 26px -20px rgb(0 0 0 / 0.6);
+}
+
+:root[data-look="casual"] body::before {
+  background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 13%, transparent) 1px, transparent 1.6px) 0 0 / 22px 22px;
+}
+:root[data-look="casual"] body::after {
+  top: auto;
+  height: 7rem;
+  background:
+    radial-gradient(60px 20px at 50% 100%, color-mix(in srgb, var(--decor) 10%, transparent) 98%, transparent) 0 100% / 120px 40px repeat-x,
+    linear-gradient(transparent 60%, color-mix(in srgb, var(--decor) 8%, transparent));
+}
+
+:root[data-look="casual"] .hud-header { box-shadow: none; border-bottom-style: dashed; border-bottom-color: color-mix(in srgb, var(--decor) 35%, var(--color-border)); }
+:root[data-look="casual"] .nav-emblem { border-radius: 0.5rem; transform: rotate(-6deg); background: color-mix(in srgb, var(--decor-2) 18%, transparent); }
+:root[data-look="casual"] .nav-active::before { border-radius: 3px; background: var(--decor-2); }
+
+/* ===== 部件：手账本 =====
+   卡片顶边正中贴一截半透明纸胶带；书架面板左下角画一架纸飞机和一串虚线；主按钮像贴纸，带一层错开的海水绿描边；
+   描边按钮是虚线；输入框聚焦像荧光笔划过下沿；标题下面一道珊瑚色荧光笔；当前项是荧光笔涂过的一块；分隔线是虚线。 */
+:root[data-look="casual"] {
+  --ui-thumb: color-mix(in srgb, var(--decor) 45%, transparent);
+  --ui-sel: color-mix(in srgb, var(--decor-2) 32%, transparent);
+  --ui-empty-art: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 20'%3E%3Cpath d='M38 3 L6 10 L15 12 Z'/%3E%3Cpath d='M38 3 L15 12 L18 18 Z' opacity='.6'/%3E%3Cpath d='M2 17 h3 M8 16 h3' stroke='black' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  --ui-corner-art: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 50'%3E%3Cpath d='M4 46 C 30 46 40 20 70 26' fill='none' stroke='black' stroke-width='2' stroke-dasharray='2 6' stroke-linecap='round'/%3E%3Cpath d='M116 8 L78 24 L88 28 Z'/%3E%3Cpath d='M116 8 L88 28 L92 38 Z' opacity='.6'/%3E%3C/svg%3E");
+  --ui-corner-ink: color-mix(in srgb, var(--decor) 20%, transparent);
+  --ui-corner-inset: auto auto 1rem 1rem;
+  --ui-corner-w: 8rem;
+  --ui-corner-h: 3.4rem;
+  --ca-tape: color-mix(in srgb, var(--decor-2) 26%, transparent);
+}
+:root[data-look="casual"] :where(.rounded-2xl.bg-surface.border, .rounded-xl.bg-surface.border, .hud-panel) {
+  background-image: linear-gradient(var(--ca-tape), var(--ca-tape));
+  background-size: 4.2rem 0.55rem;
+  background-position: 50% 0;
+  background-repeat: no-repeat;
+}
+:root[data-look="casual"] .button--primary { box-shadow: 2px 3px 0 color-mix(in srgb, var(--decor) 45%, transparent); }
+:root[data-look="casual"] .button--primary:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 color-mix(in srgb, var(--decor) 45%, transparent); }
+:root[data-look="casual"] .button--outline { border-style: dashed; border-color: color-mix(in srgb, var(--decor) 50%, var(--color-border)); }
+:root[data-look="casual"] .button--secondary { box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--decor-2) 30%, transparent); }
+:root[data-look="casual"] :where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]), textarea, select):focus-visible {
+  border-color: color-mix(in srgb, var(--decor) 55%, var(--color-border));
+  box-shadow: inset 0 -3px 0 color-mix(in srgb, var(--decor-2) 45%, transparent), 0 0 0 3px color-mix(in srgb, var(--decor) 12%, transparent);
+}
+/* 荧光笔划过标题下半截：标题宽度收到文字本身（fit-content 在放不下时仍按可用宽度，截断照常） */
+:root[data-look="casual"] :is(main section, .hud-panel) h2 {
+  width: fit-content;
+  background: linear-gradient(transparent 56%, color-mix(in srgb, var(--decor-2) 30%, transparent) 56% 90%, transparent 90%);
+}
+:root[data-look="casual"] .nav-active { background-image: linear-gradient(100deg, transparent 2%, color-mix(in srgb, var(--decor-2) 18%, transparent) 4% 92%, transparent 96%); box-shadow: none; }
+:root[data-look="casual"] aside[data-sidebar-state] { border-right-style: dashed; }
+:root[data-look="casual"] .hud-edge-right { box-shadow: none; }
+:root[data-look="casual"] .divide-y > :not(:last-child) { border-bottom-style: dashed; }
+:root[data-look="casual"] main section .border-t { border-top-style: dashed; }
+:root[data-look="casual"] .hud-divider { background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--decor) 45%, transparent) 0 6px, transparent 6px 11px); }
+:root[data-look="casual"] [role="tab"].border-b-2[aria-selected="true"] { background-image: linear-gradient(0deg, color-mix(in srgb, var(--decor-2) 22%, transparent) 0 0.45rem, transparent 0.45rem); }
+:root[data-look="casual"] .aw-switch { border-style: dashed; }
+:root[data-look="casual"] .aw-switch button[aria-selected="true"] { background: color-mix(in srgb, var(--decor-2) 14%, var(--color-surface)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--decor-2) 40%, transparent); }
+:root[data-look="casual"] .book-tab:is([data-active="true"], [aria-selected="true"]) { border-style: dashed; border-bottom-style: none; border-color: color-mix(in srgb, var(--decor) 45%, var(--color-border)); }
+:root[data-look="casual"] .book-tab:is([data-active="true"], [aria-selected="true"])::before { content: ""; position: absolute; top: -0.3rem; left: 50%; width: 2.2rem; height: 0.5rem; margin-left: -1.1rem; background: var(--ca-tape); transform: rotate(-3deg); pointer-events: none; }
+:root[data-look="casual"] .book-tab-dot { background: var(--decor-2); }
+/* 书架里的书：横格本，书脊一道珊瑚色 */
+:root[data-look="casual"] .h-14.w-10.rounded-md.border.bg-surface { background: linear-gradient(90deg, color-mix(in srgb, var(--decor-2) 45%, var(--color-surface)) 0 4px, transparent 4px), repeating-linear-gradient(transparent 0 7px, color-mix(in srgb, var(--decor) 18%, transparent) 7px 8px), var(--color-surface); }

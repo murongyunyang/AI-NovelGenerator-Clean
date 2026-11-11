@@ -1,0 +1,91 @@
+/* 阳光风格：右上角一轮暖光，几道很淡的光线；按钮是胶囊形，徽标是一个慢慢转的小太阳。 */
+:root[data-look="sunny"] {
+  --decor: #e08a00;
+  --decor-2: #e0603a;
+  --decor-tint: 22%;
+  --radius: 0.625rem;
+  --btn-radius: 999px;
+  --panel-shadow: 0 16px 34px -26px rgb(150 80 0 / 0.4);
+}
+:root[data-look="sunny"].dark {
+  --decor: #ffb547;
+  --decor-2: #ff8a5c;
+  --panel-shadow: 0 16px 34px -24px rgb(0 0 0 / 0.6);
+}
+
+:root[data-look="sunny"] body::before {
+  background:
+    radial-gradient(34rem 34rem at 100% 0%, color-mix(in srgb, var(--decor) 22%, transparent), transparent 60%),
+    repeating-conic-gradient(from 200deg at 100% 0%, color-mix(in srgb, var(--decor) 7%, transparent) 0 3deg, transparent 3deg 14deg);
+}
+:root[data-look="sunny"] body::after {
+  background: linear-gradient(transparent 70%, color-mix(in srgb, var(--decor-2) 7%, transparent));
+}
+
+/* 小太阳：一圈短光芒绕着圆心慢慢转。 */
+:root[data-look="sunny"] .nav-emblem { background: color-mix(in srgb, var(--decor) 26%, transparent); }
+:root[data-look="sunny"] .nav-emblem::before {
+  content: "";
+  inset: -4px;
+  border-radius: 50%;
+  background: repeating-conic-gradient(var(--decor) 0 8deg, transparent 8deg 45deg);
+  -webkit-mask: radial-gradient(closest-side, transparent 78%, #000 80%);
+  mask: radial-gradient(closest-side, transparent 78%, #000 80%);
+  animation: hud-orbit 24s linear infinite;
+}
+:root[data-look="sunny"] .nav-active::before { border-radius: 3px; }
+
+/* ===== 部件：晴天 =====
+   卡片顶边一道朝霞色细带（橙到珊瑚），书架面板右下角半轮带光芒的太阳；主按钮是一颗从橙到珊瑚的胶囊；
+   输入框聚焦是一圈金色；标题前一枚带光圈的小太阳；当前项是暖色胶囊；书签页当前项顶上一道朝霞。 */
+:root[data-look="sunny"] {
+  --ui-thumb: color-mix(in srgb, var(--decor) 55%, transparent);
+  --ui-sel: color-mix(in srgb, var(--decor) 32%, transparent);
+  --ui-empty-art: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 20'%3E%3Cpath d='M12 17 A 8 8 0 0 1 28 17 Z'/%3E%3Crect x='4' y='18' width='32' height='1.5'/%3E%3Cpath d='M20 4 v3 M10 8 l2 2 M30 8 l-2 2 M5 14 h3 M32 14 h3' stroke='black' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+  --ui-corner-art: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 50'%3E%3Cpath d='M30 50 A 20 20 0 0 1 70 50 Z'/%3E%3Cpath d='M50 18 v-14 M27 27 l-10 -9 M73 27 l10 -9 M18 42 h-14 M82 42 h14' stroke='black' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
+  --ui-corner-ink: color-mix(in srgb, var(--decor) 18%, transparent);
+  --ui-corner-inset: auto 1.2rem 0 auto;
+  --ui-corner-w: 7rem;
+  --ui-corner-h: 3.5rem;
+  --su-band: linear-gradient(90deg, color-mix(in srgb, var(--decor) 65%, transparent), color-mix(in srgb, var(--decor-2) 55%, transparent));
+}
+:root[data-look="sunny"] .hud-header { box-shadow: 0 1px 0 color-mix(in srgb, var(--decor) 28%, var(--color-border)), 0 8px 22px -18px color-mix(in srgb, var(--decor) 65%, transparent); }
+:root[data-look="sunny"] :where(.rounded-2xl.bg-surface.border, .rounded-xl.bg-surface.border, .hud-panel) {
+  background-image: var(--su-band), radial-gradient(16rem 6rem at 100% 0%, color-mix(in srgb, var(--decor) 7%, transparent), transparent 70%);
+  background-size: 100% 3px, auto;
+  background-position: 0 0, 0 0;
+  background-repeat: no-repeat;
+}
+:root[data-look="sunny"] .button--primary {
+  background-image: linear-gradient(100deg, transparent 40%, color-mix(in srgb, var(--decor-2) 45%, transparent));
+  box-shadow: 0 5px 14px -8px color-mix(in srgb, var(--decor) 80%, transparent), inset 0 1px 0 rgb(255 255 255 / 0.2);
+}
+:root[data-look="sunny"] .button--outline { border-color: color-mix(in srgb, var(--decor) 45%, var(--color-border)); }
+:root[data-look="sunny"] .button--outline:hover { background-color: color-mix(in srgb, var(--decor) 12%, transparent); }
+:root[data-look="sunny"] :where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]), textarea, select):focus-visible {
+  border-color: color-mix(in srgb, var(--decor) 70%, var(--color-border));
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--decor) 18%, transparent);
+}
+:root[data-look="sunny"] :is(main section, .hud-panel) h2::before {
+  content: "";
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin: 0 0.55rem 0 0.15rem;
+  vertical-align: 0.1em;
+  border-radius: 50%;
+  background: var(--decor);
+  box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 3.5px color-mix(in srgb, var(--decor) 45%, transparent);
+}
+:root[data-look="sunny"] .nav-active { border-radius: 999px; background-image: linear-gradient(90deg, color-mix(in srgb, var(--decor) 16%, transparent), transparent); box-shadow: none; }
+:root[data-look="sunny"] .nav-active::before { left: 0.35rem; top: 50%; bottom: auto; width: 0.42rem; height: 0.42rem; margin-top: -0.21rem; border-radius: 50%; }
+:root[data-look="sunny"] aside[data-sidebar-state] { background-image: radial-gradient(22rem 14rem at 0% 0%, color-mix(in srgb, var(--decor) 8%, transparent), transparent 70%); }
+:root[data-look="sunny"] .hud-divider { background: var(--su-band); opacity: 0.6; }
+:root[data-look="sunny"] [role="tab"].border-b-2[aria-selected="true"] { border-bottom-color: var(--decor); background-image: linear-gradient(0deg, color-mix(in srgb, var(--decor-2) 55%, transparent) 0 2px, color-mix(in srgb, var(--decor) 10%, transparent) 2px, transparent 80%); }
+:root[data-look="sunny"] .aw-switch { border-radius: 999px; }
+:root[data-look="sunny"] .aw-switch button { border-radius: 999px; }
+:root[data-look="sunny"] .aw-switch button[aria-selected="true"] { background: color-mix(in srgb, var(--decor) 18%, var(--color-surface)); box-shadow: 0 3px 10px -6px color-mix(in srgb, var(--decor) 90%, transparent); }
+:root[data-look="sunny"] .book-tab:is([data-active="true"], [aria-selected="true"]) { background-image: var(--su-band); background-size: 100% 2px; background-repeat: no-repeat; }
+:root[data-look="sunny"] .book-tab-dot { background: var(--decor); box-shadow: 0 0 0 2px color-mix(in srgb, var(--decor) 25%, transparent); }
+/* 书架里的书：暖白封面，下半截一轮刚冒头的太阳 */
+:root[data-look="sunny"] .h-14.w-10.rounded-md.border.bg-surface { background: radial-gradient(circle at 50% 100%, color-mix(in srgb, var(--decor) 40%, var(--color-surface)) 0 30%, transparent 31%), linear-gradient(180deg, color-mix(in srgb, var(--decor) 8%, var(--color-surface)), var(--color-surface)); }

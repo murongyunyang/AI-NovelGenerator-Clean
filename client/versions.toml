@@ -1,0 +1,14 @@
+# 打包时下载的运行环境版本。升级时只需改这里，再执行 build.bat。
+
+[python]
+version = "3.13.9"
+url = "https://www.python.org/ftp/python/3.13.9/python-3.13.9-embed-amd64.zip"
+get_pip_url = "https://bootstrap.pypa.io/get-pip.py"
+
+[node]
+version = "24.22.1"
+url = "https://nodejs.org/dist/v24.22.1/node-v24.22.1-win-x64.zip"
+
+[mongodb]
+version = "8.0.34"
+url = "https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-8.0.34.zip"

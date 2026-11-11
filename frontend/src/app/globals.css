@@ -1,0 +1,586 @@
+@import "tailwindcss" source("../");
+@import "@heroui/react/styles";
+
+@custom-variant dark (&:is(.dark *));
+
+/* 流程节点和 React Flow 控件共用应用的明暗表面。 */
+.task-flow-canvas {
+  --xy-background-color: var(--color-surface-secondary);
+  --xy-node-color: var(--foreground);
+  --xy-node-background-color: var(--color-surface);
+  --xy-node-border: 1px solid var(--color-border);
+  --xy-controls-button-background-color: var(--color-surface-raised);
+  --xy-controls-button-background-color-hover: var(--color-selected);
+  --xy-controls-button-color: var(--foreground);
+  --xy-controls-button-border-color: var(--color-border);
+  --xy-edge-label-background-color: var(--color-surface-raised);
+  --xy-edge-label-color: var(--foreground);
+  --xy-attribution-background-color: var(--color-surface-raised);
+}
+
+.task-flow-canvas .react-flow {
+  background: var(--color-surface-secondary);
+}
+.task-flow-canvas .react-flow__edge-text { fill: var(--foreground); }
+.task-flow-canvas .react-flow__edge-textbg { fill: var(--color-surface-raised); }
+.task-flow-canvas .react-flow__controls-button { min-width: 36px; min-height: 36px; }
+.task-flow-canvas .react-flow__attribution { color: var(--color-muted); }
+
+:root {
+  --app-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+  --app-font-mono: ui-monospace, "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  /* 科技预设（默认）：冰白底配深一档的青，和开机动画是同一套语言；客户端载入前也用这套，避免闪成别的配色。 */
+  --background: #eef3f9;
+  --foreground: #1b2a41;
+  --color-warm-50: #f5f9fd;
+  --color-warm-100: #e8f0f8;
+  --color-warm-200: #d3e1f0;
+  --color-warm-300: #b4c9e0;
+  --color-warm-400: #8aa7c7;
+  --color-warm-500: #6486ad;
+  --color-warm-600: #476a92;
+  --color-warm-700: #36557a;
+  --color-warm-800: #274260;
+  --color-warm-900: #1a2d45;
+  --color-accent: #0e7490;
+  --color-accent-foreground: #f0fdff;
+  --color-accent-hover: #155e75;
+  --color-surface: #f9fbfe;
+  --color-surface-secondary: #e4edf6;
+  --color-surface-raised: #ffffff;
+  --color-selected: #d7eaf5;
+  --color-border: #cbd9e8;
+  --color-muted: #4f6480;
+
+  /* 风格装饰色。运行时 ThemeCustomizationProvider 只写上面 21 个配色变量，这几个由 styles/looks 下各风格的文件按 data-look 覆盖；
+     这里是科技风格的值，也是兜底。--decor 用于焦点环、当前项竖条、细线；--decor-2 是第二点缀色；--decor-tint 是面板描边混入装饰色的比例。 */
+  --decor: #0891b2;
+  --decor-2: #6d28d9;
+  --decor-tint: 18%;
+  --app-font-display: var(--app-font-sans);
+  --panel-shadow: 0 14px 34px -28px rgb(15 23 42 / 0.35);
+  --btn-radius: 0.5rem;
+  color-scheme: light;
+}
+
+.dark {
+  /* 深空：底色与开机动画相同的深海军蓝，面板一层比一层亮，边框带一点青。 */
+  --background: #060a13;
+  --foreground: #dbe7ff;
+  --color-warm-50: #0d1424;
+  --color-warm-100: #111b30;
+  --color-warm-200: #172540;
+  --color-warm-300: #1c2a44;
+  --color-warm-400: #2d4468;
+  --color-warm-500: #4a6a99;
+  --color-warm-600: #7a98c4;
+  --color-warm-700: #a9c0e4;
+  --color-warm-800: #cddcf3;
+  --color-warm-900: #e6eefb;
+  --color-accent: #22d3ee;
+  --color-accent-foreground: #04222a;
+  --color-accent-hover: #67e8f9;
+  --color-surface: #0c1322;
+  --color-surface-secondary: #111b2f;
+  --color-surface-raised: #142039;
+  --color-selected: #12304a;
+  --color-border: #1d2e4a;
+  --color-muted: #8ea4c8;
+
+  --decor: #22d3ee;
+  --decor-2: #8b5cf6;
+  --panel-shadow: 0 16px 36px -26px rgb(0 0 0 / 0.7);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent: var(--color-accent);
+  --color-accent-foreground: var(--color-accent-foreground);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-surface: var(--color-surface);
+  --color-surface-secondary: var(--color-surface-secondary);
+  --color-surface-raised: var(--color-surface-raised);
+  --color-selected: var(--color-selected);
+  --color-border: var(--color-border);
+  --color-muted: var(--color-muted);
+  --color-warm-50: var(--color-warm-50);
+  --color-warm-100: var(--color-warm-100);
+  --color-warm-200: var(--color-warm-200);
+  --color-warm-300: var(--color-warm-300);
+  --color-warm-400: var(--color-warm-400);
+  --color-warm-500: var(--color-warm-500);
+  --color-warm-600: var(--color-warm-600);
+  --color-warm-700: var(--color-warm-700);
+  --color-warm-800: var(--color-warm-800);
+  --color-warm-900: var(--color-warm-900);
+  --font-sans: var(--app-font-sans);
+  --font-mono: var(--app-font-mono);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--app-font-sans);
+  font-size: 14px;
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+}
+
+/* 背景装饰层：固定在内容之下，只在留白处可见。画什么由各风格决定（styles/looks），这里只管位置。 */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* 设置页沿用资料编辑区的扁平字段外观，并保留 Modal、Popover 的独立浮层阴影。 */
+.settings-workspace {
+  --field-background: color-mix(in srgb, var(--background) 80%, transparent);
+  --field-foreground: var(--foreground);
+  --field-placeholder: var(--color-muted);
+  --field-border: var(--color-border);
+  --field-border-width: 1px;
+  --field-radius: 0.625rem;
+  --field-shadow: 0 0 0 0 transparent;
+  --color-field-placeholder: var(--color-muted);
+  --color-field-border: var(--color-border);
+  --border-width-field: 1px;
+  --shadow-field: 0 0 0 0 transparent;
+  --color-field-focus: color-mix(in srgb, var(--background) 80%, transparent);
+  --color-field-border-focus: var(--color-accent);
+}
+
+.settings-workspace :is(
+  [data-slot="input"],
+  [data-slot="input-group"],
+  [data-slot="select-trigger"],
+  [data-slot="number-field-group"]
+) {
+  min-height: 2.75rem;
+  --focus: color-mix(in srgb, var(--color-accent) 15%, transparent);
+}
+
+/* 工作台名册与详情保留独立滚动能力，静止时弱化滚动条，悬停或键盘聚焦时再显示。 */
+.workspace-scrollbar {
+  overscroll-behavior: contain;
+  scrollbar-color: transparent transparent;
+  scrollbar-width: thin;
+}
+
+/* 文本编辑区滚到边界后继续滚动外层；滚动条样式不应把指针困在输入框里。 */
+textarea, [contenteditable="true"], [contenteditable="plaintext-only"], .cm-scroller {
+  overscroll-behavior-y: auto !important;
+}
+
+.workspace-scrollbar:hover,
+.workspace-scrollbar:focus-within {
+  scrollbar-color: color-mix(in srgb, var(--color-muted) 42%, transparent) transparent;
+}
+
+.workspace-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.workspace-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.workspace-scrollbar::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 999px;
+}
+
+.workspace-scrollbar:hover::-webkit-scrollbar-thumb,
+.workspace-scrollbar:focus-within::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-muted) 42%, transparent);
+}
+
+/* HeroUI 与普通表单共用颜色，弹窗挂到 body 后仍继承同一套主题。 */
+:root {
+  --accent: var(--color-accent);
+  --accent-foreground: var(--color-accent-foreground);
+  --surface: var(--color-surface);
+  --surface-foreground: var(--foreground);
+  --surface-secondary: var(--color-surface-secondary);
+  --surface-secondary-foreground: var(--foreground);
+  --surface-tertiary: var(--color-surface-raised);
+  --surface-tertiary-foreground: var(--foreground);
+  --overlay: var(--color-surface-raised);
+  --overlay-foreground: var(--foreground);
+  --muted: var(--color-muted);
+  --default: var(--color-surface-secondary);
+  --default-foreground: var(--foreground);
+  --border: var(--color-border);
+  --separator: var(--color-border);
+  --focus: var(--color-accent);
+  --link: var(--color-accent);
+  --segment: var(--color-surface-raised);
+  --segment-foreground: var(--foreground);
+  --field-background: var(--color-surface);
+  --field-foreground: var(--foreground);
+  --field-border: var(--color-border);
+  --field-placeholder: var(--color-muted);
+  --field-border-width: 1px;
+  --field-radius: 0.625rem;
+  --field-shadow: 0 0 0 0 transparent;
+  --surface-shadow: 0 0 0 0 transparent;
+  --overlay-shadow: 0 16px 56px -16px rgb(0 0 0 / 0.24), 0 2px 8px rgb(0 0 0 / 0.06);
+}
+
+/* 暗色浮层依靠更亮的表面和轻边界建立层次，避免厚重发白的描边。 */
+.dark {
+  --overlay-shadow: 0 20px 64px -16px rgb(0 0 0 / 0.5), 0 4px 12px rgb(0 0 0 / 0.18);
+}
+
+@theme inline {
+  --color-canvas: color-mix(in srgb, var(--background) 78%, var(--color-surface-secondary));
+  --color-canvas-grid: color-mix(in srgb, var(--color-border) 65%, transparent);
+  --color-border-subtle: color-mix(in srgb, var(--color-border) 60%, transparent);
+  --color-field-border-focus: var(--color-accent);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--decor) 28%, transparent);
+}
+
+/* 工具按钮保持紧凑，表单和触屏操作保留足够的点击高度。 */
+.button {
+  min-height: 2.5rem;
+  border-radius: var(--btn-radius);
+}
+
+.button--sm {
+  min-height: 2.25rem;
+}
+
+/* 草稿标签在桌面保持紧凑，触屏下仍留足点按区域。 */
+.draft-chip .button {
+  height: auto;
+  min-height: 2rem;
+}
+
+@media (max-width: 639px) {
+  .draft-chip .button {
+    min-height: 2.75rem;
+  }
+}
+
+/* 搜索、筛选和操作按钮共用高度；只作用于工具栏，不改变编辑表单和弹窗。 */
+.workspace-toolbar {
+  --workspace-toolbar-height: 2.5rem;
+}
+
+@media (min-width: 48rem) {
+  /* 两侧同时预留滚动条宽度，折叠导航不会因右侧滚动槽偏离中线。 */
+  [data-sidebar-state="icons"] .workspace-scrollbar {
+    scrollbar-gutter: stable both-edges;
+  }
+}
+
+.workspace-toolbar :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]), select, .button) {
+  height: var(--workspace-toolbar-height);
+  min-height: var(--workspace-toolbar-height);
+  padding-block: 0;
+}
+
+@media (max-width: 639px) {
+  .workspace-toolbar {
+    --workspace-toolbar-height: 2.75rem;
+  }
+}
+
+/* 隐藏输入框必须跟随开关定位，避免撑开外层滚动区并在聚焦时带动页面。 */
+.switch {
+  position: relative;
+}
+
+.modal__dialog {
+  padding: 0;
+  border: 1px solid var(--color-border);
+  background: var(--overlay);
+  color: var(--foreground);
+  box-shadow: var(--overlay-shadow);
+}
+
+/* 标题、正文和按钮区各自管理内边距，标题和关闭按钮分别靠两侧。 */
+.modal__header {
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.modal__header,
+.modal__footer {
+  flex-shrink: 0;
+}
+
+.modal__header .modal__close-trigger {
+  position: static;
+  flex-shrink: 0;
+  margin-inline-start: auto;
+  align-self: center;
+}
+
+.modal__header + .modal__body,
+.modal__header + .modal__footer,
+.modal__body + .modal__footer {
+  margin-top: 0;
+}
+
+@media (min-width: 640px) {
+  .modal__dialog {
+    border-radius: 1rem;
+  }
+}
+
+@media (max-width: 639px) {
+  .button {
+    min-height: 2.75rem;
+  }
+}
+
+/* 详情按自身剩余宽度分栏，避免 1024px 屏幕下被侧栏挤成两条窄长文。 */
+.detail-fields {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+}
+
+/* 文字只负责排版；宽度由所在详情栏决定，避免重复限宽留下大片空白。 */
+.reading-copy {
+  font-size: 0.9375rem;
+  line-height: 1.85;
+  overflow-wrap: anywhere;
+}
+
+.workspace-scrollbar {
+  scrollbar-gutter: stable;
+}
+
+/* ===== 风格装饰：各风格共用的基础外观 =====
+   这里只用 --decor / --decor-2 / --decor-tint / --panel-shadow / --btn-radius / --app-font-display 这些变量，保持安静：
+   细描边、淡底色、实心按钮、不发光。发光、渐变、星空这类效果只写在对应风格的文件里（styles/looks/*.css）。 */
+
+/* 全局细滚动条与键盘焦点兜底。放在 base 层，Tailwind 工具类（outline-none、ring 等）和 .workspace-scrollbar 都能覆盖它们。 */
+@layer base {
+  :root {
+    scrollbar-color: color-mix(in srgb, var(--color-muted) 38%, transparent) transparent;
+  }
+
+  * {
+    scrollbar-width: thin;
+  }
+
+  :where(a, button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"])):focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--decor) 70%, transparent);
+    outline-offset: 2px;
+  }
+}
+
+/* 旋转渐变描边用的角度变量；浏览器不支持 @property 时退化为静态渐变。 */
+@property --hud-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes hud-spin { to { --hud-angle: 360deg; } }
+@keyframes hud-sweep { from { transform: translateY(-110%); } to { transform: translateY(270%); } }
+@keyframes hud-shimmer { from { background-position: 130% 0; } to { background-position: -30% 0; } }
+@keyframes hud-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.45; transform: scale(0.82); } }
+@keyframes hud-caret { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+
+@layer components {
+  /* 面板：细描边、淡底色、一层柔和阴影。科技风格会在它的文件里加四角刻线。 */
+  .hud-panel {
+    position: relative;
+    border: 1px solid color-mix(in srgb, var(--decor) var(--decor-tint), var(--color-border));
+    border-radius: 0.875rem;
+    background: color-mix(in srgb, var(--color-surface) 94%, transparent);
+    box-shadow: var(--panel-shadow);
+  }
+
+  .glow-accent { box-shadow: 0 0 0 1px color-mix(in srgb, var(--decor) 45%, transparent); }
+  .glow-text, .hud-glow-icon { /* 只有科技风格发光 */ }
+
+  /* 扫描线：容器内的静态细横纹加一条缓慢下移的亮带。用 ::before / ::after，不能和 .hud-panel 叠在同一元素上。 */
+  .scanline { position: relative; overflow: hidden; }
+  .scanline::before, .scanline::after { content: ""; position: absolute; inset: 0; pointer-events: none; }
+  .scanline::before { background: repeating-linear-gradient(0deg, color-mix(in srgb, var(--decor) 5%, transparent) 0 1px, transparent 1px 3px); }
+  .scanline::after {
+    height: 38%;
+    background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--decor) 13%, transparent), transparent);
+    transform: translateY(-110%);
+    animation: hud-sweep 5.5s linear infinite;
+  }
+  /* 运行中的面板：一圈装饰色渐变描边绕着转。同样占用 ::before，不能和 .hud-panel 叠用。 */
+  .running-border { position: relative; border-color: transparent !important; }
+  .running-border::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: conic-gradient(from var(--hud-angle), transparent 0 50%, var(--decor) 74%, var(--decor-2) 90%, transparent 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+    pointer-events: none;
+    animation: hud-spin 3.2s linear infinite;
+  }
+
+  /* 骨架/进度的流光。放在已有底色的元素上，高光自左向右扫过。 */
+  .shimmer {
+    background-image: linear-gradient(105deg, transparent 38%, color-mix(in srgb, var(--decor) 22%, transparent) 50%, transparent 62%);
+    background-size: 220% 100%;
+    background-repeat: no-repeat;
+    animation: hud-shimmer 1.8s ease-in-out infinite;
+  }
+
+  /* 顶栏底部的细线。用 box-shadow 而不是 border-color，因为 Tailwind 的 border-border 工具类优先级更高。 */
+  .hud-header { box-shadow: 0 1px 0 0 color-mix(in srgb, var(--decor) var(--decor-tint), var(--color-border)); }
+
+  /* 等宽小标签：步骤编号、状态、Token 数这类读数。 */
+  .hud-label { font-family: var(--app-font-mono); font-size: 0.6875rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .hud-divider { height: 1px; border: 0; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--decor) 50%, transparent), transparent); }
+
+  /* 呼吸的状态点（运行中）和流式文字末尾的闪烁光标。 */
+  .hud-dot {
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--decor);
+    animation: hud-pulse 1.4s ease-in-out infinite;
+  }
+  .hud-caret {
+    display: inline-block;
+    width: 0.5ch;
+    height: 1.05em;
+    margin-left: 1px;
+    vertical-align: text-bottom;
+    background: var(--decor);
+    animation: hud-caret 1s steps(1) infinite;
+  }
+}
+
+/* ===== 全局外观（各风格共用） =====
+   不写在 @layer 里：要压过 HeroUI 组件层；需要单独覆盖的地方仍可用 Tailwind 工具类（它们在 utilities 层，但这里只设它们不设的属性）。 */
+
+/* 主按钮：实心强调色，一点内高光；风格文件可以换成渐变、描边、错位阴影等。 */
+.button--primary {
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.16), 0 1px 2px rgb(0 0 0 / 0.12);
+  font-weight: 600;
+}
+.button--primary:disabled, .button--primary[aria-disabled="true"] { box-shadow: none; }
+/* 上面的 box-shadow 会盖掉 HeroUI 用 box-shadow 画的焦点环，这里补回来。 */
+.button--primary:is(:focus-visible, [data-focus-visible="true"]),
+.button--secondary:is(:focus-visible, [data-focus-visible="true"]) {
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--decor);
+}
+
+.button--outline { border-color: color-mix(in srgb, var(--decor) var(--decor-tint), var(--color-border)); }
+.button--outline:hover, .button--ghost:hover { color: var(--foreground); }
+.button--secondary { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--decor) var(--decor-tint), transparent); }
+
+/* 面板：所有“有边框的表面”统一带一点装饰色描边和一层柔和阴影。 */
+:where(.bg-surface.border, .bg-surface.border-r, .bg-surface.border-b, .bg-surface-raised.border) {
+  border-color: color-mix(in srgb, var(--decor) var(--decor-tint), var(--color-border));
+}
+:where(.rounded-2xl.bg-surface.border, .rounded-xl.bg-surface.border) {
+  box-shadow: var(--panel-shadow);
+}
+
+/* 输入框聚焦：装饰色细圈。 */
+:where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]), textarea, select):focus-visible {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--decor) 60%, transparent), 0 0 0 4px color-mix(in srgb, var(--decor) 14%, transparent);
+}
+:where(input[type="checkbox"], input[type="radio"]) { accent-color: var(--color-accent); }
+
+.modal__dialog { border-color: color-mix(in srgb, var(--decor) var(--decor-tint), var(--color-border)); }
+
+/* 页面大标题和顶栏书名用风格的标题字体（多数风格就是正文字体）。 */
+h1, .nav-title { font-family: var(--app-font-display); }
+
+/* 侧栏当前项：左侧一条装饰色竖线，底色淡淡一层。 */
+.nav-active {
+  position: relative;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--decor) 18%, transparent);
+}
+.nav-active::before {
+  content: "";
+  position: absolute;
+  top: 0.45rem;
+  bottom: 0.45rem;
+  left: 0;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--decor);
+}
+
+/* 侧栏和书架列表边缘的细线。 */
+.hud-edge-right { box-shadow: inset -1px 0 0 color-mix(in srgb, var(--decor) var(--decor-tint), transparent); }
+
+/* 顶栏徽标：书本图标外面一圈淡底色；各风格可以换成轨道、印章、叶片等（用 ::before / ::after）。 */
+.nav-emblem {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--decor) 14%, transparent);
+}
+.nav-emblem::before,
+.nav-emblem::after {
+  position: absolute;
+  pointer-events: none;
+}
+.nav-emblem > svg { position: relative; z-index: 1; }
+@keyframes hud-orbit { to { transform: rotate(360deg); } }
+
+/* 真实界面入场：开机层退场的同时，顶栏、侧栏、内容依次淡入。只用透明度和很小的位移，不用裁剪：
+   被裁掉的区域点不中（elementFromPoint 会穿过去），刚载入时的点击就会落空。 */
+[data-reveal] header.hud-header { --reveal-from: translateY(-6px); animation: reveal-in 0.45s 0.05s cubic-bezier(.2,.8,.2,1) both; }
+[data-reveal] aside[data-sidebar-state] { --reveal-from: translateX(-8px); animation: reveal-in 0.5s 0.12s cubic-bezier(.2,.8,.2,1) both; }
+[data-reveal] main { --reveal-from: translateY(8px); animation: reveal-in 0.55s 0.18s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes reveal-in { from { opacity: 0; transform: var(--reveal-from); } to { opacity: 1; transform: none; } }
+
+/* 减少动态效果：关闭所有循环动画，静态外观保持完整。风格文件里的选择器更具体，所以这里用 !important。 */
+@media (prefers-reduced-motion: reduce) {
+  .scanline::after,
+  .running-border::before,
+  .shimmer,
+  .hud-dot,
+  .hud-caret,
+  .hud-header::before,
+  .hud-header::after,
+  .nav-emblem::before,
+  .nav-emblem::after,
+  body::before,
+  body::after {
+    animation: none !important;
+  }
+
+  .scanline::after {
+    display: none;
+  }
+
+  [data-reveal] header.hud-header,
+  [data-reveal] aside[data-sidebar-state],
+  [data-reveal] main {
+    animation: none;
+  }
+}
+
+/* 行内文字（标题、说明）与标签、按钮同排时用：文字至少保留约 12 个字宽，放不下就整块换到下一行，
+   不会被挤成一字一行的竖排。容器本身比 12rem 还窄时按容器宽度。 */
+@utility text-fill {
+  flex: 1 1 12rem;
+  min-width: min(12rem, 100%);
+  overflow-wrap: anywhere;
+}

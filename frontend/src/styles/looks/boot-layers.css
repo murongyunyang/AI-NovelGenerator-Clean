@@ -1,0 +1,181 @@
+/* ===== 启动画面的第三层：前景、细节和待机小动作 =====
+   1) 各幕补一层前景（芦苇、蕨叶、桌沿、草坡、水草、松枝、刻度尺……），让画面有远景 / 主体 / 近景三层；
+      这些都是有限时长的入场动画，桌面启动页按真实进度推进它们。
+   2) .bs-idle 待机小动作：启动进度一时停住（splash.py 给 .boot-screen 加 data-idle）时淡入并开始动，进度再走就淡出。
+      待机动画一律不用正的延迟（启动页会把带延迟的无限动画扣到进度到点才放），平时暂停，不耗 CPU。
+      风车、台灯拉链、打字机小铃平时也看得见（是场景的一部分），只是待机时才动。
+   3) 修正：减掉科技风格里的辉光、大面积模糊；水墨竖排书名不再顶出画面；极简的纸张和书名对齐。
+   只用 transform / opacity；减少动态效果时待机小动作不显示（boot-base.css 已把其余动作直接放到最后一帧）。 */
+
+/* ---------- 待机机制 ---------- */
+.bs-idle { position: absolute; opacity: 0; transition: opacity 0.6s ease; pointer-events: none; }
+.boot-screen[data-idle] .bs-idle { opacity: 1; }
+/* 只暂停待机循环本身（子元素、以及自己就是循环的拉链和小方块）；风车、小铃自己的入场淡入不受影响。 */
+.boot-screen:not([data-idle]) :is(.bs-idle *, .wa-chain, .mn-idle) { animation-play-state: paused; }
+.boot-screen .bs-idle b { display: block; }
+.boot-screen[data-phase="leaving"] .bs-idle { transition-duration: 0.2s; }
+@keyframes bs-spin { to { transform: rotate(360deg); } }
+
+/* ---------- 科技：去掉辉光；待机时状态栏右边光标闪、三个点轮流浮起 ---------- */
+[data-scene="tech"] .te-cosmos::before, [data-scene="tech"] .te-cosmos::after { display: none; }
+[data-scene="tech"] .te-star, [data-scene="tech"] .te-engine > i, [data-scene="tech"] .te-constellation i, [data-scene="tech"] .te-area::after { box-shadow: none; }
+[data-scene="tech"] .te-core-book { filter: none; }
+[data-scene="tech"] .te-core-ring { box-shadow: none; }
+.te-idle { right: calc(var(--side) + 1.1rem); bottom: 0.5rem; z-index: 3; display: flex; align-items: center; gap: 4px; height: 0.8rem; }
+.te-idle-caret { width: 2px; height: 0.8rem; margin-right: 4px; background: var(--color-accent); animation: bs-blink 1s steps(1) infinite; }
+.te-idle b { width: 4px; height: 4px; border-radius: 1px; background: var(--color-muted); animation: te-think 1.2s ease-in-out infinite; }
+.te-idle b:nth-of-type(2) { animation-delay: -1s; }
+.te-idle b:nth-of-type(3) { animation-delay: -0.8s; }
+@keyframes te-think { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-4px); opacity: 1; } }
+
+/* ---------- 雾蓝：前景两丛芦苇；待机时一缕雾飘过书名、两只鸟掠过 ---------- */
+.mi-reeds { position: absolute; bottom: 0; width: min(10rem, 24vw); height: min(10rem, 24vw); overflow: visible; opacity: 0; transform-origin: 50% 100%; transform: scaleY(0.4); animation: mi-reeds 1.2s 1.9s cubic-bezier(.2,.7,.2,1) forwards; }
+.mi-reeds-l { left: -0.5rem; }
+.mi-reeds-r { right: -0.5rem; transform: scaleX(-1) scaleY(0.4); animation-name: mi-reeds-r; }
+.mi-reeds path { fill: none; stroke: color-mix(in srgb, var(--foreground) 46%, var(--background)); stroke-width: 2.2; stroke-linecap: round; transform-origin: 50% 100%; transform-box: fill-box; animation: mi-reed-sway calc(4s + var(--i) * 0.4s) calc(var(--i) * -0.7s) ease-in-out infinite alternate; }
+.mi-reeds path:nth-child(2n) { stroke: color-mix(in srgb, var(--foreground) 32%, var(--background)); stroke-width: 1.6; }
+@keyframes mi-reeds { to { opacity: 1; transform: none; } }
+@keyframes mi-reeds-r { to { opacity: 1; transform: scaleX(-1); } }
+@keyframes mi-reed-sway { from { transform: rotate(-2deg); } to { transform: rotate(3deg); } }
+.mi-idle { inset: 0; }
+.mi-idle-fog { position: absolute; left: -40%; top: 18%; width: 40%; height: 4.5rem; border-radius: 50%; background: radial-gradient(closest-side, color-mix(in srgb, var(--background) 80%, transparent), transparent); animation: mi-fog-pass 9s linear infinite; }
+@keyframes mi-fog-pass { to { transform: translateX(350%); } }
+.mi-idle-bird { position: absolute; right: -3rem; top: 30%; width: 1rem; height: 0.4rem; animation: mi-bird-pass 7s linear infinite; }
+.mi-idle-bird + .mi-idle-bird { top: 33%; width: 0.75rem; animation-delay: -0.6s; }
+.mi-idle-bird::before, .mi-idle-bird::after { content: ""; position: absolute; top: 0; width: 50%; height: 100%; border-top: 1.5px solid color-mix(in srgb, var(--foreground) 55%, transparent); border-radius: 50% 50% 0 0; animation: mi-flap 0.5s ease-in-out infinite alternate; }
+.mi-idle-bird::before { left: 0; transform-origin: 100% 0; }
+.mi-idle-bird::after { right: 0; transform-origin: 0 0; }
+@keyframes mi-bird-pass { 0% { transform: translate(0, 0); opacity: 0; } 8% { opacity: 1; } 85% { opacity: 1; } 100% { transform: translate(-60vw, -3vh); opacity: 0; } }
+@keyframes mi-flap { to { transform: scaleY(-0.6); } }
+
+/* ---------- 森林：远处一道山脊、前景两角的蕨叶；待机时一只小蝴蝶（夜里是一点萤火）绕着芽飞 ---------- */
+[data-scene="forest"] { isolation: isolate; }
+.fo-ridge { position: absolute; z-index: -1; left: 50%; top: var(--fo-y); width: calc(var(--fo-w) * 1.2); height: 4.2rem; margin: -4.2rem 0 0 calc(var(--fo-w) * -0.6); background: color-mix(in srgb, var(--decor) 11%, var(--background)); clip-path: polygon(0 100%, 0 70%, 8% 52%, 16% 60%, 26% 34%, 35% 46%, 44% 30%, 52% 44%, 60% 22%, 70% 40%, 79% 30%, 88% 50%, 100% 42%, 100% 100%); opacity: 0; transform: translateY(0.6rem); animation: bs-rise 1.2s 1.5s cubic-bezier(.2,.7,.2,1) forwards; }
+.dark [data-scene="forest"] .fo-ridge { background: color-mix(in srgb, var(--decor) 9%, var(--background)); }
+.fo-fern { position: absolute; bottom: -0.5rem; width: min(11rem, 26vw); height: min(11rem, 26vw); overflow: visible; opacity: 0; transform-origin: 50% 100%; transform: scaleY(0.3); animation: mi-reeds 1s 2.6s cubic-bezier(.3,1.3,.5,1) forwards; }
+.fo-fern-l { left: 1%; }
+.fo-fern-r { right: 1%; transform: scaleX(-1) scaleY(0.3); animation-name: mi-reeds-r; }
+.fo-fern path { fill: none; stroke: color-mix(in srgb, var(--decor) 70%, var(--background)); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 0.5 7; transform-origin: 50% 100%; transform-box: fill-box; animation: mi-reed-sway calc(3.6s + var(--i) * 0.3s) calc(var(--i) * -0.6s) ease-in-out infinite alternate; }
+.fo-fern path:nth-child(odd) { stroke-dasharray: none; stroke-width: 1.6; stroke: color-mix(in srgb, var(--decor) 55%, var(--background)); }
+.fo-idle { left: 50%; top: calc(var(--fo-y) - 4.6rem); width: 0; height: 0; }
+.fo-fly { position: absolute; width: 1rem; height: 0.8rem; margin: -0.4rem 0 0 -0.5rem; animation: fo-flit 6s ease-in-out infinite; }
+.fo-fly b { position: absolute; top: 0; width: 0.5rem; height: 0.7rem; border-radius: 60% 40% 50% 50%; background: color-mix(in srgb, var(--decor-2) 80%, var(--background)); transform-origin: 100% 60%; animation: fo-wing 0.28s ease-in-out infinite alternate; }
+.fo-fly b + b { left: 0.5rem; border-radius: 40% 60% 50% 50%; transform-origin: 0 60%; animation-direction: alternate-reverse; }
+@keyframes fo-flit {
+  0% { transform: translate(-3.4rem, 1rem); } 20% { transform: translate(-1rem, -1.6rem) rotate(8deg); } 40% { transform: translate(2.6rem, -0.4rem) rotate(-6deg); }
+  60% { transform: translate(3.2rem, 1.8rem); } 80% { transform: translate(0.4rem, 0.6rem) rotate(6deg); } 100% { transform: translate(-3.4rem, 1rem); }
+}
+@keyframes fo-wing { to { transform: scaleX(0.25); } }
+.dark [data-scene="forest"] .fo-fly b { width: 0.35rem; height: 0.35rem; left: 0.3rem; border-radius: 50%; background: color-mix(in srgb, #f2d27a 85%, var(--background)); animation: fo-ember 1.6s ease-in-out infinite; }
+.dark [data-scene="forest"] .fo-fly b + b { left: 0.3rem; width: 1rem; height: 1rem; margin: -0.32rem 0 0 -0.32rem; background: radial-gradient(closest-side, color-mix(in srgb, #f2d27a 30%, transparent), transparent); }
+@keyframes fo-ember { 50% { opacity: 0.35; } }
+
+/* ---------- 暖棕：封面内侧的菱格衬页、前景的木纹桌沿和一支钢笔；台灯的拉链平时垂着，待机时轻轻晃 ---------- */
+.wa-endpaper { position: absolute; inset: 0.55rem; border: 1px solid color-mix(in srgb, var(--wa-gold) 45%, transparent); border-radius: 2px;
+  background: repeating-linear-gradient(45deg, color-mix(in srgb, var(--wa-gold) 22%, transparent) 0 1px, transparent 1px 11px), repeating-linear-gradient(-45deg, color-mix(in srgb, var(--wa-gold) 22%, transparent) 0 1px, transparent 1px 11px); }
+.wa-desk { position: absolute; left: 0; right: 0; bottom: 0; height: 12%; border-top: 2px solid color-mix(in srgb, var(--decor) 55%, var(--background));
+  background: repeating-linear-gradient(177deg, transparent 0 9px, color-mix(in srgb, var(--decor) 10%, transparent) 9px 10px, transparent 10px 23px), linear-gradient(180deg, color-mix(in srgb, var(--decor) 30%, var(--background)), color-mix(in srgb, var(--decor) 18%, var(--background)));
+  opacity: 0; transform: translateY(30%); animation: bs-rise 0.6s 0.6s cubic-bezier(.2,.7,.2,1) forwards; }
+.dark [data-scene="warm"] .wa-desk { background: repeating-linear-gradient(177deg, transparent 0 9px, color-mix(in srgb, var(--decor) 8%, transparent) 9px 10px, transparent 10px 23px), linear-gradient(180deg, color-mix(in srgb, var(--decor) 22%, var(--background)), color-mix(in srgb, var(--decor) 10%, var(--background))); }
+.wa-pen { position: absolute; left: calc(50% - var(--wa-w) * 1.6); top: calc(50% + var(--wa-h) / 2 - 1.1rem); width: 5.6rem; height: 0.42rem; border-radius: 0.2rem 0.3rem 0.3rem 0.2rem; background: linear-gradient(90deg, color-mix(in srgb, var(--wa-cover) 90%, #000) 0 68%, var(--wa-gold) 68% 72%, color-mix(in srgb, var(--wa-cover) 80%, #000) 72%); opacity: 0; transform: translateX(-1.5rem) rotate(-12deg); animation: wa-pen 0.6s 2.9s cubic-bezier(.2,.8,.2,1) forwards; }
+.wa-pen::after { content: ""; position: absolute; right: 100%; top: 0.03rem; border-top: 0.18rem solid transparent; border-bottom: 0.18rem solid transparent; border-right: 0.7rem solid var(--wa-gold); }
+@keyframes wa-pen { to { opacity: 1; transform: rotate(-12deg); } }
+.wa-chain { left: calc(50% + 1.7rem); top: 100%; width: 1px; height: 1.9rem; opacity: 1; background: repeating-linear-gradient(180deg, color-mix(in srgb, var(--wa-gold) 80%, var(--foreground)) 0 2px, transparent 2px 3px); transform-origin: 50% 0; animation: wa-chain 2.6s ease-in-out infinite; }
+.wa-chain::after { content: ""; position: absolute; left: -2.5px; bottom: -5px; width: 6px; height: 6px; border-radius: 50%; background: var(--wa-gold); }
+@keyframes wa-chain { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(9deg); } 75% { transform: rotate(-9deg); } }
+@media (max-width: 640px) { .wa-pen { display: none; } }
+
+/* ---------- 可爱：待机时小猫打盹，头顶飘出三个 z ---------- */
+.cu-idle { left: calc(50% + 2.3rem); top: -4.6rem; z-index: 4; width: 3rem; height: 3rem; }
+.cu-idle span { position: absolute; left: 0; bottom: 0; font: 700 1.15rem/1 var(--cu-round); color: var(--decor-2); opacity: 0; animation: cu-zz 2.4s calc(var(--i) * -0.8s) ease-out infinite; }
+.cu-idle span:nth-child(2) { font-size: 1.45rem; }
+.cu-idle span:nth-child(3) { font-size: 1.75rem; }
+.cu-eye { transition: transform 0.4s ease; }
+.boot-screen[data-idle] .cu-eye { transform: scaleY(0.15); }
+@keyframes cu-zz { 0% { opacity: 0; transform: translate(0, 0) rotate(-10deg) scale(0.6); } 20% { opacity: 1; } 100% { opacity: 0; transform: translate(1.6rem, -2.4rem) rotate(12deg) scale(1); } }
+
+/* ---------- 休闲：待机时铅笔在书名右下角随手绕圈，画完擦掉再画 ---------- */
+.ca-idle { left: calc(50% + min(8rem, 30vw)); top: calc(50% + 2.6rem); width: 5rem; height: 2.5rem; overflow: visible; }
+.ca-idle path { fill: none; stroke: color-mix(in srgb, var(--foreground) 55%, transparent); stroke-width: 1.8; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: ca-doodle 3.2s ease-in-out infinite; }
+@keyframes ca-doodle { 0% { stroke-dashoffset: 1; } 55%, 70% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -1; } }
+
+/* ---------- 阳光：草地分出远近两层（远处一排矮灌木，近处一道深一点的草坡）；坡上的小风车待机时转 ---------- */
+[data-scene="sunny"] .su-field i { width: 7.5rem; height: 2.6rem; bottom: -0.9rem; border-radius: 50% 50% 0 0 / 100% 100% 0 0; background: color-mix(in srgb, var(--decor) 16%, var(--background)); }
+[data-scene="sunny"] .su-field i:nth-child(2n) { height: 1.9rem; background: color-mix(in srgb, var(--decor-2) 13%, var(--background)); }
+[data-scene="sunny"] .su-stem::after { left: -0.3rem; top: -0.5rem; width: 0.62rem; height: 0.62rem; background: radial-gradient(circle, #fff2c6 0 22%, transparent 26%), var(--decor); }
+[data-scene="sunny"] .su-stem:nth-child(2n)::after { background: radial-gradient(circle, #fff2c6 0 22%, transparent 26%), var(--decor-2); }
+.su-near { position: absolute; left: 0; right: 0; bottom: 0; height: 15%; pointer-events: none; opacity: 0; transform: translateY(40%); animation: bs-rise 0.9s 2.75s cubic-bezier(.2,.7,.2,1) forwards; }
+.su-near::before, .su-near::after { content: ""; position: absolute; bottom: -40%; border-radius: 50% 50% 0 0 / 100% 100% 0 0; background: color-mix(in srgb, var(--decor) 26%, var(--background)); }
+.su-near::before { left: -12%; width: 64%; height: 140%; }
+.su-near::after { right: -14%; width: 52%; height: 110%; background: color-mix(in srgb, var(--decor-2) 22%, var(--background)); }
+.su-near i { position: absolute; z-index: 1; bottom: calc(18% + (var(--i) - 2.5) * (var(--i) - 2.5) * -3%); left: calc(6% + var(--i) * 16%); width: 1.3rem; height: 0.9rem; background: color-mix(in srgb, var(--decor) 52%, var(--foreground)); clip-path: polygon(0 100%, 20% 30%, 34% 100%, 50% 0, 64% 100%, 80% 35%, 100% 100%); opacity: 0.55; }
+.su-idle { right: 15%; bottom: 7%; width: 2.6rem; height: 5rem; opacity: 0; animation: bs-in 0.5s 3.1s forwards; }
+.boot-screen[data-idle] .su-idle { opacity: 1; }
+.su-pin-stick { position: absolute; left: 50%; top: 1.3rem; bottom: 0; width: 2px; margin-left: -1px; background: color-mix(in srgb, var(--foreground) 45%, var(--background)); }
+.su-pin-wheel { position: absolute; left: 0.1rem; top: 0; width: 2.4rem; height: 2.4rem; animation: bs-spin 1.4s linear infinite; }
+.su-pin-wheel b { position: absolute; left: 50%; top: 50%; width: 1.2rem; height: 1.2rem; margin: -1.2rem 0 0 0; background: var(--decor); clip-path: polygon(0 100%, 0 0, 100% 100%); transform-origin: 0 100%; }
+.su-pin-wheel b:nth-child(2) { transform: rotate(90deg); background: var(--decor-2); }
+.su-pin-wheel b:nth-child(3) { transform: rotate(180deg); }
+.su-pin-wheel b:nth-child(4) { transform: rotate(270deg); background: var(--decor-2); }
+.su-pin-wheel::after { content: ""; position: absolute; left: 50%; top: 50%; width: 5px; height: 5px; margin: -2.5px; border-radius: 50%; background: var(--foreground); }
+@media (max-width: 640px) { .su-idle { right: 6%; } }
+
+/* ---------- 治愈：色块收淡；前景一丛水草、水边几块卵石；待机时叶尖又落下一滴水 ---------- */
+[data-scene="heal"] .he-b1 { background: radial-gradient(closest-side, color-mix(in srgb, var(--decor) 11%, transparent), transparent); }
+[data-scene="heal"] .he-b2 { background: radial-gradient(closest-side, color-mix(in srgb, var(--decor-2) 12%, transparent), transparent); }
+[data-scene="heal"] .he-b3 { background: radial-gradient(closest-side, color-mix(in srgb, #f2b38f 10%, transparent), transparent); }
+.he-reeds { position: absolute; left: calc(50% - min(17rem, 46vw) - 1.5rem); top: calc(var(--he-y) - 7rem); width: 7rem; height: 7.6rem; overflow: visible; opacity: 0; transform-origin: 50% 100%; transform: scaleY(0.2); animation: mi-reeds 1.1s 2.25s cubic-bezier(.3,1.2,.5,1) forwards; }
+.he-reeds path { fill: none; stroke: color-mix(in srgb, var(--decor-2) 70%, var(--foreground)); stroke-width: 2; stroke-linecap: round; transform-origin: 50% 100%; transform-box: fill-box; animation: mi-reed-sway calc(4.2s + var(--i) * 0.35s) calc(var(--i) * -0.8s) ease-in-out infinite alternate; }
+.he-reeds path:nth-child(2n) { stroke: color-mix(in srgb, var(--decor-2) 45%, var(--background)); }
+.he-stones { position: absolute; left: 50%; top: calc(var(--he-y) + 3.3rem); width: 0; height: 0; }
+.he-stones i { position: absolute; width: calc(1.6rem + var(--i) * 0.25rem); height: calc(0.8rem + var(--i) * 0.1rem); border-radius: 50% 50% 46% 46% / 62% 62% 38% 38%; background: color-mix(in srgb, var(--decor) 14%, var(--color-surface)); box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--decor) 12%, transparent); opacity: 0; transform: translateY(6px); animation: bs-rise 0.6s calc(2.7s + var(--i) * 0.1s) ease forwards; }
+.he-stones i:nth-child(1) { left: -10rem; }
+.he-stones i:nth-child(2) { left: -7.8rem; top: 0.5rem; }
+.he-stones i:nth-child(3) { left: 6.6rem; top: 0.3rem; background: color-mix(in srgb, var(--decor-2) 16%, var(--color-surface)); }
+.he-stones i:nth-child(4) { left: 9rem; top: -0.2rem; }
+@media (max-width: 640px) { .he-reeds { left: 0; } .he-stones { display: none; } }
+.he-idle { left: 50%; top: calc(var(--he-y) - 0.8rem); width: 0; height: 0; }
+.he-idle-drop { position: absolute; left: -0.3rem; top: 0; width: 0.6rem; height: 0.8rem; border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%; background: color-mix(in srgb, var(--decor) 75%, var(--color-surface-raised)); animation: he-idle-drop 3.4s cubic-bezier(.55,0,.9,.5) infinite; }
+@keyframes he-idle-drop { 0%, 40% { opacity: 0; transform: translateY(calc(7.6rem - 62vh)) scale(0.3); } 45% { opacity: 1; transform: translateY(calc(7.6rem - 62vh)) scale(1); } 66% { opacity: 1; transform: translateY(0) scale(1); } 70%, 100% { opacity: 0; transform: translateY(0) scale(1.6, 0.2); } }
+.he-idle-ring { position: absolute; left: -5rem; top: -0.45rem; width: 10rem; height: 2.5rem; border-radius: 50%; border: 1.5px solid color-mix(in srgb, var(--decor) 50%, transparent); opacity: 0; animation: he-idle-ring 3.4s ease-out infinite; }
+@keyframes he-idle-ring { 0%, 67% { opacity: 0; transform: scale(0.05); } 70% { opacity: 0.8; } 100% { opacity: 0; transform: scale(1.3); } }
+
+/* ---------- 水墨：竖排书名按窗口高度收字号、去掉中间的空格；飞白和墨点挪到印章下面；右上角一枝松；待机时一滴墨晕开 ---------- */
+[data-scene="ink"] .in-title { font-size: clamp(1.6rem, min(5vw, 5.2vh), 2.6rem); letter-spacing: 0.2em; }
+[data-scene="ink"] .in-title .bs-ch[data-text=" "] { display: none; }
+[data-lang="en"] [data-scene="ink"] .in-title .bs-ch[data-text=" "] { display: inline-block; }
+[data-scene="ink"] .in-brush { top: 82%; opacity: 0.38; }
+[data-scene="ink"] .in-ink-drops i { top: calc(83% + var(--i) * 0.5rem); }
+.in-pine { position: absolute; right: 0; top: 0; width: min(24rem, 46vw); height: min(12.8rem, 24.5vw); overflow: visible; color: var(--foreground); }
+.in-pine-branch { fill: none; stroke: color-mix(in srgb, var(--foreground) 62%, transparent); stroke-width: 5; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: bs-draw 1.1s 1s cubic-bezier(.3,.6,.3,1) forwards; }
+.in-pine-tuft { opacity: 0; transform: scale(0.3); transform-box: fill-box; transform-origin: 50% 100%; animation: in-tuft 0.5s calc(1.7s + var(--i) * 0.16s) cubic-bezier(.3,1.4,.5,1) forwards; }
+.in-pine-tuft path { fill: none; stroke: color-mix(in srgb, var(--foreground) 50%, transparent); stroke-width: 1.4; stroke-linecap: round; }
+@keyframes in-tuft { to { opacity: 1; transform: none; } }
+.in-idle { left: calc(50% - min(14rem, 30vw)); top: 60%; width: 0; height: 0; }
+.in-idle i { position: absolute; left: -2.4rem; top: -2.4rem; width: 4.8rem; height: 4.8rem; border-radius: 46% 54% 50% 50%; background: radial-gradient(closest-side, color-mix(in srgb, var(--foreground) 55%, transparent) 0 24%, color-mix(in srgb, var(--foreground) 16%, transparent) 55%, transparent 72%); filter: url(#in-rough); animation: in-idle 4s ease-out infinite; }
+@keyframes in-idle { 0% { opacity: 0; transform: scale(0.05); } 12% { opacity: 0.9; } 70% { opacity: 0.45; transform: scale(1); } 100% { opacity: 0; transform: scale(1.15); } }
+
+/* ---------- 复古：滑架右端一只小铃，平时立着，待机时隔一会儿“叮”地晃一下 ---------- */
+.re-idle { z-index: 5; left: calc(50% + (min(34rem, 88vw) + 2.4rem) / 2 - 0.4rem); top: calc(50% + 4.5rem); width: 1.2rem; height: 1rem; opacity: 0; animation: bs-in 0.4s 0.5s forwards; }
+.boot-screen[data-idle] .re-idle { opacity: 1; }
+.re-bell { position: absolute; inset: 0; border-radius: 50% 50% 12% 12% / 80% 80% 12% 12%; background: linear-gradient(180deg, color-mix(in srgb, var(--decor-2) 70%, #fff), var(--decor-2)); transform-origin: 50% 100%; animation: re-ding 2.8s ease-in-out infinite; }
+.re-bell::after { content: ""; position: absolute; left: 50%; top: -3px; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: var(--decor-2); }
+.re-idle b { position: absolute; left: calc(100% + 2px); top: -2px; width: 0.5rem; height: 1rem; border: 1.5px solid transparent; border-right-color: color-mix(in srgb, var(--foreground) 45%, transparent); border-radius: 50%; opacity: 0; animation: re-ding-wave 2.8s ease-out infinite; }
+.re-idle b + b { left: calc(100% + 6px); top: -5px; width: 0.8rem; height: 1.4rem; animation-delay: -2.7s; }
+@keyframes re-ding { 0%, 22%, 100% { transform: rotate(0); } 4% { transform: rotate(14deg); } 9% { transform: rotate(-11deg); } 14% { transform: rotate(6deg); } 18% { transform: rotate(-3deg); } }
+@keyframes re-ding-wave { 0%, 2% { opacity: 0; transform: translateX(-3px); } 6% { opacity: 1; } 30%, 100% { opacity: 0; transform: translateX(4px); } }
+
+/* ---------- 极简：纸张叠在书名后面、对齐书名和线；底边一把刻度尺按进度落下；待机时一个小方块在刻度间跳 ---------- */
+[data-scene="minimal"] .mn-pages { top: calc(50% - 6.6rem); width: calc(min(30rem, 84vw) + 4rem); height: 11rem; transform: translateX(-50%); }
+[data-scene="minimal"] .mn-fold { left: calc(50% + (min(30rem, 84vw) + 4rem) / 2 - 1.2rem); top: calc(50% - 6.6rem); }
+.mn-ruler { position: absolute; left: 50%; bottom: 3.4rem; width: min(30rem, 84vw); height: 0.9rem; margin-left: calc(min(30rem, 84vw) / -2); border-top: 1px solid color-mix(in srgb, var(--foreground) 22%, transparent); display: flex; justify-content: space-between; }
+.mn-ruler i { width: 1px; height: 0.35rem; background: color-mix(in srgb, var(--foreground) 45%, transparent); transform: scaleY(0); transform-origin: 50% 0; animation: bs-rise 0.2s calc(0.6s + var(--i) * 0.15s) ease-out forwards; }
+.mn-ruler i:nth-child(6n+1) { height: 0.8rem; background: var(--foreground); }
+.mn-ruler i:last-child { background: var(--decor); }
+.mn-idle { left: calc(50% + min(30rem, 84vw) / 2 - 1.15rem); top: calc(50% + 1.65rem); width: 5px; height: 5px; background: var(--decor); animation: mn-tick 1.2s steps(1) infinite; }
+@keyframes mn-tick { 0% { transform: translateX(0); } 33% { transform: translateX(7px); } 66% { transform: translateX(14px); } }
+
+/* 减少动态效果：只在待机时出现的小动作整个不显示；风车、拉链、小铃作为静止的场景细节保留。 */
+@media (prefers-reduced-motion: reduce) {
+  .bs-idle:not(.su-idle):not(.re-idle):not(.wa-chain) { display: none; }
+}

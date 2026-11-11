@@ -1,0 +1,122 @@
+/* 雾蓝：三段。
+   1. 满屏白雾从中间向两边散开，露出三层远山，一层比一层近地浮上来（0–1.4 秒）；
+   2. 山下一面湖，倒映着最近那层山，湖面几道细光轻轻闪；书名从雾里慢慢清楚，下面一道细线展开；
+   3. 一只小船从湖面左边划进来，身后拖一道细细的水纹。
+   白天雾里一轮淡淡的太阳，夜里换成一弯月亮和几点星。退场：雾从下往上散开。 */
+[data-scene="mist"] {
+  --mi-lake: 18%;
+  --mi-fogc: color-mix(in srgb, var(--background) 88%, var(--decor-2));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--decor) 10%, var(--background)), var(--background) 70%);
+}
+.dark [data-scene="mist"] { --mi-fogc: color-mix(in srgb, var(--background) 82%, var(--decor)); }
+
+.mi-orb {
+  position: absolute;
+  left: 66%;
+  top: 16%;
+  width: 7rem;
+  height: 7rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-surface-raised) 70%, var(--decor-2));
+  opacity: 0;
+  animation: mi-orb 1.6s 0.5s ease forwards;
+}
+.dark [data-scene="mist"] .mi-orb {
+  width: 2.6rem;
+  height: 2.6rem;
+  background: transparent;
+  box-shadow: inset -0.7rem 0.35rem 0 0 color-mix(in srgb, var(--foreground) 80%, transparent);
+}
+@keyframes mi-orb { to { opacity: 0.5; } }
+.dark [data-scene="mist"] .mi-orb { animation-name: mi-moon; }
+@keyframes mi-moon { to { opacity: 0.85; } }
+/* 夜里的星：很小、很淡，慢慢亮起再微微闪 */
+.mi-star { position: absolute; left: var(--x); top: var(--y); width: 2px; height: 2px; border-radius: 50%; background: var(--foreground); opacity: 0; display: none; }
+.dark [data-scene="mist"] .mi-star { display: block; animation: mi-twinkle 2.6s calc(1s + var(--i) * 0.18s) ease-in-out infinite alternate; }
+@keyframes mi-twinkle { from { opacity: 0; } to { opacity: 0.55; } }
+
+/* 1. 三层远山：坐在湖岸上 */
+.mi-hill { position: absolute; left: -5%; right: -5%; bottom: var(--mi-lake); opacity: 0; transform: translateY(18px); animation: bs-rise 1.4s cubic-bezier(.2,.7,.2,1) forwards; }
+.mi-h3 { height: 40%; background: color-mix(in srgb, var(--decor) 14%, var(--background)); clip-path: polygon(0 62%, 9% 48%, 20% 56%, 33% 30%, 44% 46%, 56% 34%, 69% 50%, 81% 28%, 92% 42%, 100% 36%, 100% 100%, 0 100%); animation-delay: 0.35s; }
+.mi-h2 { height: 30%; background: color-mix(in srgb, var(--decor) 24%, var(--background)); clip-path: polygon(0 50%, 12% 34%, 26% 52%, 40% 26%, 53% 44%, 67% 30%, 79% 48%, 90% 32%, 100% 44%, 100% 100%, 0 100%); animation-delay: 0.5s; }
+.mi-h1 { height: 20%; background: color-mix(in srgb, var(--decor) 36%, var(--background)); clip-path: polygon(0 46%, 15% 30%, 29% 44%, 46% 22%, 61% 40%, 76% 26%, 89% 42%, 100% 30%, 100% 100%, 0 100%); animation-delay: 0.65s; }
+
+/* 2. 湖：最近那层山的倒影（上下翻过来、越往下越淡），几道细光 */
+.mi-lake {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--mi-lake);
+  overflow: hidden;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--decor) 22%, var(--background)), color-mix(in srgb, var(--decor) 10%, var(--background)));
+  opacity: 0;
+  animation: bs-in 0.9s 0.7s ease forwards;
+}
+.mi-mirror {
+  position: absolute;
+  left: -5%;
+  right: -5%;
+  top: 0;
+  height: 110%;
+  background: color-mix(in srgb, var(--decor) 30%, var(--background));
+  clip-path: polygon(0 0, 100% 0, 100% 70%, 89% 58%, 76% 74%, 61% 60%, 46% 78%, 29% 56%, 15% 70%, 0 54%);
+  -webkit-mask-image: linear-gradient(180deg, #000, transparent 85%), repeating-linear-gradient(180deg, #000 0 5px, transparent 5px 7px);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(180deg, #000, transparent 85%), repeating-linear-gradient(180deg, #000 0 5px, transparent 5px 7px);
+  mask-composite: intersect;
+  opacity: 0.55;
+}
+.mi-glint { position: absolute; left: calc(18% + var(--i) * 27%); top: calc(28% + var(--i) * 18%); width: 3.2rem; height: 1px; background: color-mix(in srgb, var(--background) 85%, var(--decor-2)); opacity: 0; animation: mi-glint 2.4s calc(1.3s + var(--i) * 0.5s) ease-in-out infinite; }
+.dark [data-scene="mist"] .mi-glint { background: color-mix(in srgb, var(--foreground) 45%, transparent); }
+@keyframes mi-glint { 0%, 100% { opacity: 0; transform: scaleX(0.4); } 50% { opacity: 0.9; transform: scaleX(1); } }
+
+/* 3. 小船：一块梯形船身、一面三角帆，从左边划到湖的右半边 */
+.mi-boat { position: absolute; left: 0; bottom: calc(var(--mi-lake) * 0.45); width: 2.6rem; height: 2.4rem; opacity: 0; transform: translateX(16vw); animation: mi-sail 2s 1.5s cubic-bezier(.25,.6,.35,1) forwards; }
+@keyframes mi-sail { 0% { opacity: 0; transform: translateX(16vw); } 20% { opacity: 1; } 100% { opacity: 1; transform: translateX(58vw); } }
+.mi-sail { position: absolute; left: 0.75rem; bottom: 0.5rem; width: 1.3rem; height: 1.8rem; background: color-mix(in srgb, var(--foreground) 52%, var(--background)); clip-path: polygon(0 0, 100% 100%, 0 100%); }
+.mi-hull { position: absolute; left: 0; right: 0; bottom: 0; height: 0.55rem; background: color-mix(in srgb, var(--foreground) 62%, var(--background)); clip-path: polygon(0 0, 100% 0, 84% 100%, 14% 100%); }
+.mi-wake { position: absolute; right: 100%; bottom: 0.1rem; width: 4.5rem; height: 1px; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--foreground) 35%, transparent)); }
+
+.mi-fog { position: absolute; height: 9rem; border-radius: 50%; background: radial-gradient(closest-side, color-mix(in srgb, var(--background) 92%, transparent), transparent); }
+/* 夜里的雾比底色稍亮一点（用底色画会像一团影子） */
+.dark [data-scene="mist"] .mi-fog { background: radial-gradient(closest-side, color-mix(in srgb, var(--decor) 16%, transparent), transparent); }
+.mi-f1 { left: -12%; bottom: calc(var(--mi-lake) + 6%); width: 70%; animation: mi-drift 9s linear infinite; }
+.mi-f2 { right: -16%; bottom: calc(var(--mi-lake) - 4%); width: 76%; animation: mi-drift 11s linear infinite reverse; }
+@keyframes mi-drift { from { transform: translateX(-6%); } to { transform: translateX(10%); } }
+
+.mi-title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 30%;
+  text-align: center;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 300;
+  letter-spacing: 0.5em;
+  text-indent: 0.5em;
+  color: var(--foreground);
+  opacity: 0;
+  filter: blur(6px);
+  animation: mi-focus 1.6s 0.9s cubic-bezier(.2,.6,.2,1) forwards;
+}
+[data-lang="en"] .mi-title { letter-spacing: 0.24em; text-indent: 0.24em; }
+@keyframes mi-focus { 60% { opacity: 0.9; } to { opacity: 1; filter: blur(0); letter-spacing: 0.32em; } }
+[data-lang="en"] .mi-title { animation-name: mi-focus-en; }
+@keyframes mi-focus-en { 60% { opacity: 0.9; } to { opacity: 1; filter: blur(0); letter-spacing: 0.16em; } }
+.mi-line { position: absolute; left: 50%; top: calc(30% + 4.2rem); width: 7rem; height: 1px; margin-left: -3.5rem; background: color-mix(in srgb, var(--decor) 70%, transparent); transform: scaleX(0); animation: bs-rise 0.9s 2s ease forwards; }
+
+/* 开场的雾：两片盖满屏幕，边缘柔和，从中间向两边散开 */
+.mi-veil { position: absolute; top: -10%; bottom: -10%; width: 70%; background: var(--mi-fogc); }
+.mi-veil-l { left: -10%; -webkit-mask-image: linear-gradient(90deg, #000 70%, transparent); mask-image: linear-gradient(90deg, #000 70%, transparent); animation: mi-part-l 1.5s 0.15s cubic-bezier(.45,0,.2,1) forwards; }
+.mi-veil-r { right: -10%; -webkit-mask-image: linear-gradient(270deg, #000 70%, transparent); mask-image: linear-gradient(270deg, #000 70%, transparent); animation: mi-part-r 1.5s 0.15s cubic-bezier(.45,0,.2,1) forwards; }
+@keyframes mi-part-l { to { transform: translateX(-105%); opacity: 0.3; } }
+@keyframes mi-part-r { to { transform: translateX(105%); opacity: 0.3; } }
+
+@property --mi-lift { syntax: "<percentage>"; inherits: false; initial-value: 0%; }
+:root[data-look="mist"] .boot-screen[data-phase="leaving"] {
+  -webkit-mask-image: linear-gradient(to top, transparent calc(var(--mi-lift) - 30%), #000 var(--mi-lift));
+  mask-image: linear-gradient(to top, transparent calc(var(--mi-lift) - 30%), #000 var(--mi-lift));
+  animation: mi-lift 0.8s cubic-bezier(.5,0,.3,1) forwards;
+}
+@keyframes mi-lift { from { --mi-lift: 0%; } to { --mi-lift: 135%; } }

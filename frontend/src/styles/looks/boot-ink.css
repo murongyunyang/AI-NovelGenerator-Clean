@@ -1,0 +1,64 @@
+/* 水墨：宣纸。三段。
+   1. 一滴墨落在纸上晕开，边缘毛糙，成了左上方一轮淡墨的月（0–1.2 秒）；
+   2. 远山一层一层从左往右染出来，近山比远山深，山脚化进雾里；
+   3. 竖排书名逐字像墨渗进纸里那样显出，旁边一行小字题款，最后一方朱印压下去，两只飞鸟远远掠过。
+   暗色把墨和纸反过来（浅墨在深底上），朱印不变。退场：整层像墨散在水里，模糊、淡出。 */
+[data-scene="ink"] {
+  --in-kai: "STKaiti", "KaiTi", "楷体", "Kaiti SC", serif;
+  background: var(--grain, none), var(--background);
+}
+.in-defs { position: absolute; width: 0; height: 0; }
+.in-wash { position: absolute; border-radius: 50%; opacity: 0; animation: bs-in 1.4s 0.2s forwards; }
+.in-w1 { right: -8%; bottom: -12%; width: 46rem; height: 16rem; background: radial-gradient(closest-side, color-mix(in srgb, var(--foreground) 6%, transparent), transparent); }
+.in-w2 { right: 18%; bottom: -8%; width: 30rem; height: 10rem; background: radial-gradient(closest-side, color-mix(in srgb, var(--foreground) 5%, transparent), transparent); }
+
+/* 1. 墨团：从一点晕成一轮淡墨的月 */
+.in-blot { position: absolute; left: calc(50% - min(22rem, 40vw)); top: 14%; width: 9rem; height: 9rem; filter: url(#in-rough); }
+.in-blot::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 70%, transparent) 0 26%, color-mix(in srgb, var(--foreground) 26%, transparent) 50%, transparent 70%); opacity: 0; transform: scale(0.08); animation: in-bloom 1.4s 0.1s cubic-bezier(.2,.6,.2,1) forwards; }
+@keyframes in-bloom { 25% { opacity: 0.9; } to { opacity: 0.6; transform: scale(1); } }
+/* 窄屏：墨团挪到左上角并缩小，不压在竖排书名上 */
+@media (max-width: 640px) { .in-blot { left: 6%; top: 8%; width: 6rem; height: 6rem; } }
+
+/* 2. 远山：两层，从左往右染开（遮罩边缘柔和），山脚淡进纸里 */
+@property --in-sweep { syntax: "<percentage>"; inherits: false; initial-value: -20%; }
+.in-hills {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 36%;
+  color: var(--foreground);
+  -webkit-mask-image: linear-gradient(90deg, #000 var(--in-sweep), transparent calc(var(--in-sweep) + 20%));
+  mask-image: linear-gradient(90deg, #000 var(--in-sweep), transparent calc(var(--in-sweep) + 20%));
+  animation: in-sweep 1.3s cubic-bezier(.4,0,.3,1) forwards;
+}
+.in-far { opacity: 0.16; animation-delay: 0.7s; }
+.in-near { height: 26%; opacity: 0.3; animation-delay: 1.05s; }
+@keyframes in-sweep { to { --in-sweep: 120%; } }
+
+/* 3. 竖排书名、题款、朱印 */
+.in-col { position: absolute; left: 50%; top: 46%; display: flex; flex-direction: column; align-items: center; gap: 1.2rem; transform: translate(-50%, -50%); }
+.in-title { writing-mode: vertical-rl; font: 400 clamp(2rem, 5vw, 2.8rem)/1 var(--in-kai); letter-spacing: 0.32em; color: var(--foreground); }
+.in-title .bs-ch { text-orientation: upright; opacity: 0; filter: blur(5px); transform: scale(1.08); animation: in-soak 0.6s calc(1.45s + var(--i) * 0.12s) ease-out forwards; }
+@keyframes in-soak { to { opacity: 1; filter: blur(0); transform: none; } }
+[data-lang="en"] .in-title { writing-mode: horizontal-tb; font-size: clamp(1.6rem, 4vw, 2.2rem); letter-spacing: 0.08em; }
+[data-lang="en"] .in-title .bs-ch { animation-delay: calc(1.45s + var(--i) * 0.05s); }
+/* 题款：书名右边一行小字，从上往下淡出来 */
+.in-note { position: absolute; left: calc(100% + 0.9rem); top: 0.4rem; writing-mode: vertical-rl; font: 400 0.95rem/1 var(--in-kai); letter-spacing: 0.5em; color: var(--color-muted); }
+.in-note .bs-ch { text-orientation: upright; opacity: 0; animation: bs-in 0.4s calc(2.35s + var(--i) * 0.1s) ease forwards; }
+/* 书名全部显出之后再盖印 */
+.in-seal { display: grid; grid-template-columns: 1fr; width: 2.2rem; padding: 0.25rem 0; border-radius: 0.25rem; background: var(--decor-2); color: #fbf3e6; font: 600 0.9rem/1.15 var(--in-kai); text-align: center; opacity: 0; transform: scale(1.6) rotate(-14deg); animation: in-stamp 0.3s 2.75s cubic-bezier(.5,0,.6,1.5) forwards; }
+@keyframes in-stamp { 60% { opacity: 1; transform: scale(0.94) rotate(-5deg); } to { opacity: 0.92; transform: scale(1) rotate(-6deg); } }
+
+/* 飞鸟：两笔短弧，从右往左远远掠过 */
+.in-bird { position: absolute; right: -4%; top: 26%; width: 1rem; height: 0.4rem; opacity: 0; }
+.in-bird::before, .in-bird::after { content: ""; position: absolute; top: 0; width: 50%; height: 100%; border-top: 1.5px solid color-mix(in srgb, var(--foreground) 55%, transparent); border-radius: 50% 50% 0 0; }
+.in-bird::before { left: 0; }
+.in-bird::after { right: 0; }
+.in-bd1 { animation: in-glide 4.5s 2.5s linear forwards; }
+.in-bd2 { top: 30%; width: 0.7rem; height: 0.3rem; animation: in-glide 5s 2.7s linear forwards; }
+@keyframes in-glide { 0% { opacity: 0; transform: translate(0, 0); } 12% { opacity: 1; } 100% { opacity: 0.8; transform: translate(-52vw, -4vh); } }
+
+:root[data-look="ink"] .boot-screen[data-phase="leaving"] { animation: in-leave 0.8s ease-in forwards; }
+@keyframes in-leave { to { opacity: 0; filter: blur(14px); transform: scale(1.04); } }

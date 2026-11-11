@@ -1,0 +1,85 @@
+/* ===== 背景小动静 =====
+   AmbientLayer 渲染 .ambient > i×7。每种风格让这几颗粒子做自己的事：雾带横移、落叶、墨晕、光斑、涟漪……
+   只用 transform 和 opacity，颜色都很淡（压在正文下面，不影响对比度）；切到后台暂停，减少动态效果时整层不显示。
+   桌面启动页也画这一层（splash.py），所以即使启动进度一时停住，画面也还在慢慢动。 */
+.ambient { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; contain: strict; }
+.ambient i {
+  --s: 6px; --c: color-mix(in srgb, var(--decor, #888) 22%, transparent); --x: 50%; --y: 50%; --d: 30s; --w: 0s;
+  position: absolute; left: var(--x); top: var(--y); width: var(--s); height: var(--s);
+  border-radius: 50%; background: var(--c); opacity: 0; will-change: transform, opacity;
+  animation: var(--anim, none) var(--d) var(--w) linear infinite;
+}
+.ambient i:nth-child(1) { --x: 8%;  --y: 72%; --w: -3s; }
+.ambient i:nth-child(2) { --x: 22%; --y: 18%; --w: -11s; --d: 36s; }
+.ambient i:nth-child(3) { --x: 41%; --y: 86%; --w: -19s; --d: 42s; }
+.ambient i:nth-child(4) { --x: 58%; --y: 30%; --w: -7s;  --d: 33s; }
+.ambient i:nth-child(5) { --x: 73%; --y: 64%; --w: -25s; --d: 39s; }
+.ambient i:nth-child(6) { --x: 87%; --y: 12%; --w: -15s; --d: 45s; }
+.ambient i:nth-child(7) { --x: 94%; --y: 82%; --w: -29s; --d: 37s; }
+:root[data-hidden="true"] .ambient i { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .ambient { display: none; } }
+
+/* 科技：几粒很淡的尘点慢慢向上漂 */
+:root[data-look="tech"] .ambient i { --anim: amb-rise; --s: 3px; --c: color-mix(in srgb, var(--decor) 55%, transparent); }
+/* 雾蓝：三条宽而淡的雾带左右缓移 */
+:root[data-look="mist"] .ambient i { --anim: amb-fog; width: 34rem; height: 7rem; border-radius: 50%; --d: 60s;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--decor) 10%, transparent), transparent); }
+:root[data-look="mist"] .ambient i:nth-child(n+4) { display: none; }
+/* 森林：几片小叶子打着转落下 */
+:root[data-look="forest"] .ambient i { --anim: amb-leaf; --s: 10px; --y: -4%; border-radius: 0 70% 0 70%; --c: color-mix(in srgb, var(--decor) 30%, transparent); }
+/* 暖棕：灯下的浮尘，慢慢上浮 */
+:root[data-look="warm"] .ambient i { --anim: amb-mote; --s: 4px; --c: color-mix(in srgb, var(--decor-2, var(--decor)) 45%, transparent); }
+/* 可爱：彩色小泡泡一边晃一边往上飘 */
+:root[data-look="cute"] .ambient i { --anim: amb-bubble; --s: 14px; --y: 104%; background: transparent; box-shadow: inset 0 0 0 1.5px var(--c); }
+:root[data-look="cute"] .ambient i:nth-child(odd) { --c: color-mix(in srgb, var(--decor) 35%, transparent); }
+:root[data-look="cute"] .ambient i:nth-child(even) { --c: color-mix(in srgb, var(--decor-2, var(--decor)) 35%, transparent); --s: 9px; }
+/* 休闲：几截彩色纸条斜着飘过 */
+:root[data-look="casual"] .ambient i { --anim: amb-confetti; width: 12px; height: 4px; border-radius: 2px; --y: -4%; }
+:root[data-look="casual"] .ambient i:nth-child(3n+1) { --c: color-mix(in srgb, var(--decor) 35%, transparent); }
+:root[data-look="casual"] .ambient i:nth-child(3n+2) { --c: color-mix(in srgb, var(--decor-2, var(--decor)) 35%, transparent); }
+:root[data-look="casual"] .ambient i:nth-child(3n) { --c: color-mix(in srgb, var(--color-accent) 25%, transparent); }
+/* 阳光：树叶缝里漏下来的光斑，忽明忽暗 */
+:root[data-look="sunny"] .ambient i { --anim: amb-dapple; --s: 9rem; --d: 14s;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--decor) 12%, transparent), transparent); }
+/* 治愈：水面一圈圈慢慢荡开的涟漪 */
+:root[data-look="heal"] .ambient i { --anim: amb-ripple; --s: 7rem; --d: 12s; background: transparent;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--decor) 22%, transparent); }
+:root[data-look="heal"] .ambient i:nth-child(n+5) { display: none; }
+/* 水墨：墨滴落在宣纸上慢慢晕开 */
+:root[data-look="ink"] .ambient i { --anim: amb-ink; --s: 11rem; --d: 22s;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--foreground) 6%, transparent) 30%, transparent); border-radius: 46% 54% 52% 48%; }
+:root[data-look="ink"] .ambient i:nth-child(n+5) { display: none; }
+/* 复古：胶片颗粒轻轻抖动，再加几粒灰尘 */
+:root[data-look="retro"] .ambient i { --anim: amb-rise; --s: 3px; --c: color-mix(in srgb, var(--foreground) 22%, transparent); }
+:root[data-look="retro"] .ambient i:first-child { --anim: amb-grain; --d: 1.2s; left: -10%; top: -10%; width: 120%; height: 120%; border-radius: 0; opacity: 0.05;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation-timing-function: steps(4); }
+/* 极简：页面底部一个小点沿细线慢慢走 */
+:root[data-look="minimal"] .ambient i { display: none; }
+:root[data-look="minimal"] .ambient i:first-child { display: block; --anim: amb-line; --s: 4px; --x: 0; --y: calc(100% - 10px); --d: 48s; --c: color-mix(in srgb, var(--decor) 45%, transparent); }
+
+@keyframes amb-rise { 0% { opacity: 0; transform: translate3d(0, 0, 0); } 15%, 80% { opacity: 1; } 100% { opacity: 0; transform: translate3d(2rem, -40vh, 0); } }
+@keyframes amb-fog { 0%, 100% { opacity: 0.9; transform: translate3d(-18%, 0, 0); } 50% { opacity: 1; transform: translate3d(18%, -1.5rem, 0); } }
+@keyframes amb-leaf {
+  0% { opacity: 0; transform: translate3d(0, 0, 0) rotate(0); }
+  10% { opacity: 1; }
+  50% { transform: translate3d(3rem, 55vh, 0) rotate(200deg); }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(-1rem, 108vh, 0) rotate(420deg); }
+}
+@keyframes amb-mote { 0% { opacity: 0; transform: translate3d(0, 0, 0); } 30%, 70% { opacity: 0.9; } 100% { opacity: 0; transform: translate3d(-1.5rem, -22vh, 0); } }
+@keyframes amb-bubble {
+  0% { opacity: 0; transform: translate3d(0, 0, 0); }
+  12% { opacity: 1; }
+  25% { transform: translate3d(0.8rem, -25vh, 0); }
+  50% { transform: translate3d(-0.8rem, -50vh, 0); }
+  75% { transform: translate3d(0.8rem, -75vh, 0); }
+  88% { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(0, -108vh, 0); }
+}
+@keyframes amb-confetti { 0% { opacity: 0; transform: translate3d(0, 0, 0) rotate(0); } 10%, 85% { opacity: 1; } 100% { opacity: 0; transform: translate3d(-12rem, 108vh, 0) rotate(540deg); } }
+@keyframes amb-dapple { 0%, 100% { opacity: 0.25; transform: scale(0.85); } 50% { opacity: 1; transform: scale(1.1); } }
+@keyframes amb-ripple { 0% { opacity: 0; transform: scale(0.2); } 20% { opacity: 1; } 100% { opacity: 0; transform: scale(2.2); } }
+@keyframes amb-ink { 0% { opacity: 0; transform: scale(0.3) rotate(0); } 25% { opacity: 1; } 100% { opacity: 0; transform: scale(1.6) rotate(25deg); } }
+@keyframes amb-grain { 0% { transform: translate3d(0, 0, 0); } 25% { transform: translate3d(-3%, 2%, 0); } 50% { transform: translate3d(2%, -3%, 0); } 75% { transform: translate3d(-2%, -1%, 0); } 100% { transform: translate3d(1%, 3%, 0); } }
+@keyframes amb-line { 0% { opacity: 0; transform: translate3d(0, 0, 0); } 5%, 95% { opacity: 1; } 100% { opacity: 0; transform: translate3d(100vw, 0, 0); } }

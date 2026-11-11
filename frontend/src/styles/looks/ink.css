@@ -1,0 +1,88 @@
+/* 水墨风格：宣纸颗粒，右下角一抹远山淡墨；方角、不加阴影；标题用楷体，徽标是一方朱红印章，当前项是一笔朱红。 */
+:root[data-look="ink"] {
+  --decor: #2b2925;
+  --decor-2: #b8322a;
+  --decor-tint: 0%;
+  --radius: 0.25rem;
+  --btn-radius: 0.25rem;
+  --app-font-display: "STKaiti", "KaiTi", "楷体", "Kaiti SC", serif;
+  --panel-shadow: none;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .2 0 0 0 0 .18 0 0 0 0 .15 0 0 0 .12 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+:root[data-look="ink"].dark {
+  --decor: #e9e4d8;
+  --decor-2: #d4473b;
+}
+
+:root[data-look="ink"] body::before {
+  background:
+    radial-gradient(30rem 9rem at 88% 100%, color-mix(in srgb, var(--decor) 10%, transparent), transparent 70%),
+    radial-gradient(22rem 7rem at 72% 102%, color-mix(in srgb, var(--decor) 8%, transparent), transparent 70%),
+    var(--grain);
+}
+
+:root[data-look="ink"] .button--primary { box-shadow: none; }
+:root[data-look="ink"] .nav-emblem { border-radius: 0.2rem; background: var(--decor-2); transform: rotate(-4deg); }
+:root[data-look="ink"] .nav-emblem > svg { color: #fbf3e6; }
+:root[data-look="ink"] .nav-active { box-shadow: none; }
+:root[data-look="ink"] .nav-active::before { width: 2px; border-radius: 0; background: var(--decor-2); }
+
+/* ===== 部件：装裱的画轴 =====
+   卡片像裱好的画芯：离边 4px 一道淡墨细线，左下角一抹淡墨；书架面板右下角两层淡墨远山；
+   主按钮是一块墨（无阴影）；描边按钮下沿一笔墨；输入框聚焦下沿一笔浓墨；标题前一方小朱印；
+   当前项是一笔朱红；分隔线是两头收笔的一笔淡墨；书签页当前项顶上一方小朱印；书架里的书是线装书，左上贴一张朱红题签。 */
+:root[data-look="ink"] {
+  --ui-thumb: color-mix(in srgb, var(--decor) 35%, transparent);
+  --ui-sel: color-mix(in srgb, var(--decor-2) 22%, transparent);
+  --ui-empty-ink: color-mix(in srgb, var(--decor) 35%, transparent);
+  --ui-empty-art: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 20'%3E%3Cpath d='M0 20 C 6 18 9 8 14 8 C 18 8 19 14 23 14 C 27 14 29 4 34 4 C 37 4 39 12 40 20 Z'/%3E%3Crect x='31' y='15' width='4' height='4' fill='black' opacity='.6'/%3E%3C/svg%3E");
+  --ui-corner-art: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 60'%3E%3Cpath d='M0 60 C 20 50 30 26 48 24 C 62 22 66 40 80 40 C 96 40 104 14 124 12 C 140 10 150 34 160 60 Z' opacity='.55'/%3E%3Cpath d='M30 60 C 46 52 56 40 72 42 C 90 44 96 52 120 50 C 136 48 148 54 160 60 Z'/%3E%3C/svg%3E");
+  --ui-corner-ink: color-mix(in srgb, var(--decor) 10%, transparent);
+  --ui-corner-inset: auto 0 0 auto;
+  --ui-corner-w: 20rem;
+  --ui-corner-h: 7.5rem;
+}
+:root[data-look="ink"] .hud-header { box-shadow: none; }
+:root[data-look="ink"] .hud-header::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--decor) 45%, transparent) 12%, color-mix(in srgb, var(--decor) 30%, transparent) 70%, transparent); pointer-events: none; }
+:root[data-look="ink"] :where(.rounded-2xl.bg-surface.border, .rounded-xl.bg-surface.border, .hud-panel) {
+  box-shadow: inset 0 0 0 4px var(--color-surface), inset 0 0 0 5px color-mix(in srgb, var(--decor) 12%, transparent);
+}
+:root[data-look="ink"] :where(.rounded-2xl.bg-surface.border, .rounded-xl.bg-surface.border) {
+  background-image: radial-gradient(12rem 5rem at 0% 100%, color-mix(in srgb, var(--decor) 5%, transparent), transparent 70%);
+}
+:root[data-look="ink"] :is(.button--secondary, .button--outline) { box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--decor) 45%, transparent); }
+:root[data-look="ink"] .button--outline { border-color: color-mix(in srgb, var(--decor) 25%, var(--color-border)); }
+:root[data-look="ink"] .button--outline:hover { background-color: color-mix(in srgb, var(--decor) 7%, transparent); }
+:root[data-look="ink"] :where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]), textarea, select):focus-visible {
+  border-color: color-mix(in srgb, var(--decor) 45%, var(--color-border));
+  box-shadow: inset 0 -2px 0 var(--decor);
+}
+:root[data-look="ink"] :is(main section, .hud-panel) h2::before {
+  content: "";
+  display: inline-block;
+  width: 0.48rem;
+  height: 0.48rem;
+  margin-right: 0.55rem;
+  vertical-align: 0.12em;
+  border-radius: 1px;
+  background: var(--decor-2);
+  transform: rotate(-5deg);
+}
+:root[data-look="ink"] h1 { letter-spacing: 0.08em; font-weight: 600; }
+:root[data-look="ink"] .nav-active { background-image: linear-gradient(90deg, color-mix(in srgb, var(--decor) 7%, transparent), transparent 80%); }
+:root[data-look="ink"] .hud-edge-right { box-shadow: inset -1px 0 0 color-mix(in srgb, var(--decor) 18%, transparent); }
+:root[data-look="ink"] .hud-divider { height: 2px; border-radius: 50%; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--decor) 50%, transparent) 15%, color-mix(in srgb, var(--decor) 22%, transparent) 85%, transparent); }
+:root[data-look="ink"] [role="tab"].border-b-2[aria-selected="true"] { border-bottom-color: var(--decor-2); }
+:root[data-look="ink"] .aw-switch { border-radius: 0.25rem; }
+:root[data-look="ink"] .aw-switch button { border-radius: 0.2rem; }
+:root[data-look="ink"] .aw-switch button[aria-selected="true"] { color: var(--color-accent-foreground); background: var(--color-accent); box-shadow: none; }
+:root[data-look="ink"] .aw-switch button[aria-selected="true"] .aw-switch-count { color: inherit; }
+:root[data-look="ink"] .book-tab { border-radius: 0.25rem 0.25rem 0 0; }
+:root[data-look="ink"] .book-tab:is([data-active="true"], [aria-selected="true"])::before { content: ""; position: absolute; top: 0.3rem; right: 0.15rem; width: 0.3rem; height: 0.3rem; background: var(--decor-2); pointer-events: none; }
+:root[data-look="ink"] .book-tab-dot { border-radius: 1px; background: var(--decor-2); }
+/* 书架里的书：线装书，左上贴一张朱红题签 */
+:root[data-look="ink"] .h-14.w-10.rounded-md.border.bg-surface {
+  border-radius: 2px;
+  background: linear-gradient(var(--decor-2), var(--decor-2)) 30% 18% / 22% 46% no-repeat, repeating-linear-gradient(180deg, transparent 0 9px, color-mix(in srgb, var(--decor) 30%, transparent) 9px 10px) 2px 0 / 3px 100% no-repeat, color-mix(in srgb, var(--decor) 6%, var(--color-surface));
+}
+:root[data-look="ink"] .h-14.w-10.rounded-md.border.bg-surface svg { opacity: 0; }

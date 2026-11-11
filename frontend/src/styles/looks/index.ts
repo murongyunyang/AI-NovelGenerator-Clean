@@ -1,0 +1,33 @@
+/* 各风格的界面装饰与开机动画。选择器都以 :root[data-look="…"] 或 [data-scene="…"] 开头，载入顺序不影响结果；
+   只有 ui-base.css（部件的共用机制）要排在各风格文件前面，让风格文件里同优先级的变量覆盖它。 */
+import "./ui-base.css";
+import "./motion.css";
+import "./motion-looks.css";
+import "./ambient.css";
+import "./theme-atmosphere.css";
+import "./tech.css";
+import "./mist.css";
+import "./forest.css";
+import "./warm.css";
+import "./cute.css";
+import "./casual.css";
+import "./sunny.css";
+import "./heal.css";
+import "./ink.css";
+import "./retro.css";
+import "./minimal.css";
+import "./boot-base.css";
+import "./boot-tech.css";
+import "./boot-mist.css";
+import "./boot-forest.css";
+import "./boot-warm.css";
+import "./boot-cute.css";
+import "./boot-casual.css";
+import "./boot-sunny.css";
+import "./boot-heal.css";
+import "./boot-ink.css";
+import "./boot-retro.css";
+import "./boot-minimal.css";
+import "./boot-enriched.css";
+import "./boot-layers.css";
+import "./boot-atmosphere.css";

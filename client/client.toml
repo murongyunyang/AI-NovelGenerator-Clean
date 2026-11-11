@@ -1,0 +1,27 @@
+# 客户端配置。打包时会复制到 dist\client\client.toml，打包后也可以直接改这份。
+
+[app]
+# 窗口标题，也用于生成 exe 文件名
+title = "AI 小说生成器"
+exe_name = "AI小说生成器"
+
+[window]
+width = 1400
+height = 900
+min_width = 1000
+min_height = 680
+# 开启后可在窗口内右键“检查”打开开发者工具
+debug = false
+
+[ports]
+# 与原项目默认端口（8200/3300/27017）错开，避免和网页版同时运行时冲突。
+# 注意：backend 端口会在构建前端时写死进前端代码，修改后需要重新执行 build.bat。
+mongodb = 27118
+backend = 18201
+frontend = 13301
+
+[data]
+# 小说数据、配置、日志的存放位置。留空表示 %LOCALAPPDATA%\AINovelGenerator-Clean（纯净版专用，不与原版共用）。
+# 开发模式（dev.bat）固定使用 client\build\dev-data，避免弄乱正式数据。
+dir = ""
+database_name = "novel_generator"

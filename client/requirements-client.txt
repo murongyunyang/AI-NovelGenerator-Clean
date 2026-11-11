@@ -1,0 +1,2 @@
+# 客户端额外依赖；后端依赖来自项目根目录 requirements.txt（打包时自动排除仅旧启动器使用的 PySide6）。
+pywebview==5.4

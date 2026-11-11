@@ -1,0 +1,85 @@
+/* 阳光：三段。
+   1. 黎明前：天还是深的，几颗星，地平线先亮起一道暖色（0–0.8 秒）；
+   2. 太阳从两座小山之间升起，光芒慢慢转开，星星隐去，天色褪成白天的暖白；
+   3. 两朵扁云飘进来，两只小鸟飞过，书名落在地平线下，脚下冒出一排小花。
+   暗色是傍晚：太阳更红、往下沉，星星一颗颗亮起来。退场：从地平线向上下两边裂开，露出界面。 */
+[data-scene="sunny"] {
+  --su-h: 56%;
+  --su-sun: #ffb21f;
+  --su-dawn: #f6a07a;
+  --su-night: #2c3550;
+  background: var(--background);
+}
+.dark [data-scene="sunny"] { --su-sun: #ff8a4c; --su-dawn: #7a3b2a; --su-night: #0e0d14; }
+
+/* 1. 天色：深夜蓝在上、暖色在地平线；白天慢慢褪掉，傍晚留下一层 */
+.su-dawn { position: absolute; inset: 0; background: linear-gradient(180deg, color-mix(in srgb, var(--su-night) 70%, var(--background)), color-mix(in srgb, var(--su-dawn) 72%, var(--background)) var(--su-h), var(--background) var(--su-h)); animation: su-dawn 1.8s 0.6s ease forwards; }
+@keyframes su-dawn { to { opacity: 0.18; } }
+.dark [data-scene="sunny"] .su-dawn { animation-name: su-dusk; }
+@keyframes su-dusk { to { opacity: 0.75; } }
+.su-star { position: absolute; left: var(--x); top: var(--y); width: 3px; height: 3px; border-radius: 50%; background: #fff6e0; opacity: 0.85; animation: su-star-out 0.8s calc(0.7s + var(--i) * 0.06s) ease forwards; }
+@keyframes su-star-out { to { opacity: 0; } }
+.dark [data-scene="sunny"] .su-star { opacity: 0; animation: su-star-in 0.9s calc(1.2s + var(--i) * 0.15s) ease forwards; }
+@keyframes su-star-in { to { opacity: 0.7; } }
+/* 地平线上先亮起的一道暖色 */
+.su-glow { position: absolute; left: 0; right: 0; top: calc(var(--su-h) - 7rem); height: 7rem; background: radial-gradient(60% 100% at 50% 100%, color-mix(in srgb, var(--su-sun) 40%, transparent), transparent); opacity: 0; animation: su-glow 0.8s 0.15s ease-out forwards, su-glow-out 1.4s 1.6s ease forwards; }
+@keyframes su-glow { to { opacity: 1; } }
+@keyframes su-glow-out { to { opacity: 0.35; } }
+
+/* 2. 太阳与光芒 */
+.su-sky { position: absolute; left: 0; right: 0; top: 0; height: var(--su-h); overflow: hidden; }
+.su-sun { position: absolute; left: 50%; bottom: 0; width: 7.5rem; height: 7.5rem; margin-left: -3.75rem; transform: translateY(100%); animation: su-rise 1.5s 0.55s cubic-bezier(.25,.7,.3,1) forwards; }
+@keyframes su-rise { to { transform: translateY(18%); } }
+.dark [data-scene="sunny"] .su-sun { animation-name: su-set; }
+@keyframes su-set { to { transform: translateY(42%); } }
+.su-disc { position: absolute; inset: 0; border-radius: 50%; background: var(--su-sun); }
+.su-rays {
+  position: absolute;
+  inset: -3.2rem;
+  border-radius: 50%;
+  background: repeating-conic-gradient(color-mix(in srgb, var(--su-sun) 55%, transparent) 0 4deg, transparent 4deg 20deg);
+  -webkit-mask: radial-gradient(closest-side, transparent 58%, #000 60%, #000 82%, transparent 100%);
+  mask: radial-gradient(closest-side, transparent 58%, #000 60%, #000 82%, transparent 100%);
+  opacity: 0;
+  animation: bs-in 0.8s 1.4s forwards, hud-orbit 40s linear infinite;
+}
+/* 两座小山：一左一右，太阳从中间的山口升起来 */
+.su-hill { position: absolute; top: var(--su-h); height: 4.6rem; margin-top: -4.6rem; border-radius: 50% 50% 0 0 / 100% 100% 0 0; background: color-mix(in srgb, var(--decor) 22%, var(--background)); transform: translateY(100%); animation: bs-rise 0.9s cubic-bezier(.2,.7,.2,1) forwards; }
+.su-hl { left: -6%; width: 50%; animation-delay: 0.2s; }
+.su-hr { right: -8%; width: 52%; height: 3.4rem; margin-top: -3.4rem; background: color-mix(in srgb, var(--decor-2) 20%, var(--background)); animation-delay: 0.3s; }
+
+.su-ground { position: absolute; left: 0; right: 0; top: var(--su-h); bottom: 0; border-top: 1px solid color-mix(in srgb, var(--foreground) 22%, transparent); background: color-mix(in srgb, var(--decor) 10%, var(--background)); }
+
+/* 3. 扁云、小鸟、书名、小花 */
+.su-cloud { position: absolute; height: 0.9rem; border-radius: 999px; background: color-mix(in srgb, var(--color-surface-raised) 80%, var(--su-dawn)); opacity: 0; animation: su-cloud 1.6s cubic-bezier(.2,.7,.2,1) forwards; }
+.su-cl1 { left: 14%; top: 20%; width: 7rem; animation-delay: 1.9s; }
+.su-cl2 { right: 12%; top: 30%; width: 5rem; animation-delay: 2.1s; }
+.su-cloud::after { content: ""; position: absolute; left: 20%; bottom: 40%; width: 45%; height: 1.4rem; border-radius: 999px; background: inherit; }
+.dark [data-scene="sunny"] .su-cloud { background: color-mix(in srgb, var(--su-dawn) 55%, var(--background)); }
+@keyframes su-cloud { from { opacity: 0; transform: translateX(-2.5rem); } to { opacity: 0.9; transform: none; } }
+
+.su-title { position: absolute; left: 0; right: 0; top: calc(var(--su-h) + 2.2rem); text-align: center; font-size: clamp(1.5rem, 3.8vw, 2.2rem); font-weight: 700; letter-spacing: 0.2em; text-indent: 0.2em; color: var(--foreground); opacity: 0; transform: translateY(8px); animation: bs-rise 0.7s 2.2s cubic-bezier(.2,.7,.2,1) forwards; }
+[data-lang="en"] .su-title { letter-spacing: 0.06em; text-indent: 0.06em; }
+/* 小花：一根细茎顶一朵圆花，一排从地里冒出来 */
+.su-stem { position: absolute; left: calc(50% - 7.5rem + var(--i) * 2.5rem); top: calc(var(--su-h) + 8.4rem); width: 2px; height: 1.1rem; margin-top: -1.1rem; background: color-mix(in srgb, var(--decor) 55%, var(--foreground)); transform: scaleY(0); transform-origin: 50% 100%; animation: bs-rise 0.35s calc(2.55s + var(--i) * 0.06s) cubic-bezier(.3,1.5,.5,1) forwards; }
+.su-stem:nth-child(3n) { height: 1.5rem; margin-top: -1.5rem; }
+.su-stem:nth-child(3n+1) { height: 0.8rem; margin-top: -0.8rem; }
+.su-stem::after { content: ""; position: absolute; left: -0.25rem; top: -0.45rem; width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--decor); }
+.su-stem:nth-child(2n)::after { background: var(--decor-2); }
+
+/* 小鸟：两段弧线拼成一个“v” */
+.su-bird { position: absolute; top: 24%; left: -6%; width: 0.9rem; height: 0.45rem; opacity: 0; }
+.su-bird::before, .su-bird::after { content: ""; position: absolute; top: 0; width: 50%; height: 100%; border-top: 2px solid color-mix(in srgb, var(--foreground) 60%, transparent); border-radius: 50% 50% 0 0; }
+.su-bird::before { left: 0; }
+.su-bird::after { right: 0; }
+.su-b1 { animation: su-fly 4s 1.7s linear forwards; }
+.su-b2 { top: 28%; width: 0.7rem; height: 0.35rem; animation: su-fly 4.4s 1.95s linear forwards; }
+@keyframes su-fly { 0% { opacity: 0; transform: translate(0, 0); } 10% { opacity: 1; } 100% { opacity: 1; transform: translate(70vw, -6vh); } }
+
+@property --su-gap { syntax: "<length>"; inherits: false; initial-value: 0px; }
+:root[data-look="sunny"] .boot-screen[data-phase="leaving"] {
+  -webkit-mask-image: linear-gradient(180deg, #000 calc(56% - var(--su-gap)), transparent calc(56% - var(--su-gap)), transparent calc(56% + var(--su-gap)), #000 calc(56% + var(--su-gap)));
+  mask-image: linear-gradient(180deg, #000 calc(56% - var(--su-gap)), transparent calc(56% - var(--su-gap)), transparent calc(56% + var(--su-gap)), #000 calc(56% + var(--su-gap)));
+  animation: su-open 0.8s cubic-bezier(.7,0,.3,1) forwards;
+}
+@keyframes su-open { to { --su-gap: 60vh; } }

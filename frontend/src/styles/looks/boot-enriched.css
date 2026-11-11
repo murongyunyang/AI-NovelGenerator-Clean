@@ -1,0 +1,83 @@
+/* 启动画面的第二层次：每个主题用自己的叙事动作表现加载推进，不另放通用进度条。
+   这里的有限动画会被桌面启动页按真实加载进度逐帧推进；循环动画只负责环境微动。 */
+
+/* 科技：灵感节点逐一连成故事星座，最后收束成一枚完成标记。 */
+.te-constellation{position:absolute;left:50%;top:19%;width:min(32rem,80vw);height:8rem;transform:translateX(-50%);opacity:0;animation:bs-in .6s 3.7s forwards}
+.te-constellation i{position:absolute;left:calc(12% + var(--i)*25%);top:calc(48% + (var(--i) - 1.5)*9%);width:.55rem;height:.55rem;border:1px solid var(--color-accent);border-radius:50%;background:var(--background);box-shadow:0 0 1rem color-mix(in srgb,var(--color-accent) 55%,transparent);transform:scale(0);animation:te-node .4s calc(3.8s + var(--i)*.18s) cubic-bezier(.2,1.6,.4,1) forwards}
+.te-constellation b{position:absolute;left:12%;top:48%;width:76%;height:1px;background:linear-gradient(90deg,transparent,var(--color-accent),transparent);transform-origin:0 50%;transform:scaleX(0) rotate(calc((var(--i,0) - 1)*4deg));opacity:.45;animation:te-link .8s 4.15s ease forwards}
+.te-constellation b:nth-of-type(2){transform:scaleX(0) rotate(-5deg);animation-delay:4.3s}.te-constellation b:nth-of-type(3){transform:scaleX(0) rotate(4deg);animation-delay:4.45s}
+.te-complete{position:absolute;left:50%;bottom:9%;display:flex;align-items:center;gap:.55rem;transform:translateX(-50%);color:var(--color-muted);font:500 .68rem/1 var(--app-font-mono);letter-spacing:.2em;opacity:0;animation:bs-in .5s 4.75s forwards}
+.te-complete i{width:.7rem;height:.4rem;border-left:1px solid var(--color-accent);border-bottom:1px solid var(--color-accent);transform:rotate(-45deg)}
+@keyframes te-node{to{transform:scale(1)}}@keyframes te-link{to{transform:scaleX(1) rotate(0)}}
+
+/* 雾蓝：船行过处留下真实水纹，远处飞鸟让山水不只是静态背景。 */
+.mi-ripples{position:absolute;left:58%;bottom:7%;width:8rem;height:2rem;opacity:0;animation:bs-in .4s 3s forwards}
+.mi-ripples i{position:absolute;inset:0;border:1px solid color-mix(in srgb,var(--foreground) 30%,transparent);border-radius:50%;transform:scale(.1);animation:mi-ripple 2.8s calc(3.05s + var(--i)*.45s) ease-out infinite}
+.mi-birds{position:absolute;left:72%;top:25%;width:5rem;height:2rem;opacity:0;animation:mi-birds 2s 3.1s ease-out forwards}
+.mi-birds i{position:absolute;width:1rem;height:.5rem;border-top:1px solid color-mix(in srgb,var(--foreground) 55%,transparent);border-radius:50%;transform:rotate(12deg)}
+.mi-birds i::after{content:"";position:absolute;left:80%;top:-1px;width:1rem;height:.5rem;border-top:1px solid color-mix(in srgb,var(--foreground) 55%,transparent);border-radius:50%;transform:rotate(-24deg)}
+.mi-birds i:last-child{left:2.8rem;top:.8rem;transform:scale(.7) rotate(8deg)}
+@keyframes mi-ripple{0%{opacity:.7;transform:scale(.1)}100%{opacity:0;transform:scale(1.5)}}@keyframes mi-birds{0%{opacity:0;transform:translate(-3rem,1rem)}30%{opacity:.7}100%{opacity:.7;transform:translate(2rem,-1rem)}}
+
+/* 森林：藤蔓沿书名伸展，花粉在光束里漂浮，让“故事生长”完整收束。 */
+.fo-vine{position:absolute;top:calc(var(--fo-y) + 4.8rem);width:min(11rem,22vw);height:2rem;border-top:1px solid color-mix(in srgb,var(--decor) 60%,transparent);opacity:0;animation:fo-vine 1.2s 3.1s ease forwards}
+.fo-vine-l{right:calc(50% + 8rem);border-radius:70% 0 0;transform-origin:100% 0;transform:scaleX(0)}
+.fo-vine-r{left:calc(50% + 8rem);border-radius:0 70% 0 0;transform-origin:0 0;transform:scaleX(0)}
+.fo-vine i{position:absolute;top:-.35rem;left:calc(12% + var(--i)*35%);width:.8rem;height:.45rem;border-radius:0 100% 0 100%;background:var(--decor);opacity:0;transform:scale(0);animation:fo-vine-leaf .35s calc(3.45s + var(--i)*.18s) ease forwards}
+.fo-pollen{position:absolute;inset:0;pointer-events:none}.fo-pollen i{position:absolute;left:calc(35% + var(--i)*7%);top:calc(34% + var(--i)*3%);width:3px;height:3px;border-radius:50%;background:var(--decor-2);opacity:0;animation:fo-pollen 4s calc(3s + var(--i)*.2s) ease-in-out infinite}
+@keyframes fo-vine{to{opacity:1;transform:scaleX(1)}}@keyframes fo-vine-leaf{to{opacity:.8;transform:scale(1) rotate(25deg)}}@keyframes fo-pollen{0%,100%{opacity:0;transform:translateY(1rem)}40%,70%{opacity:.7;transform:translateY(-1rem)}}
+
+/* 暖棕：茶的热气与灯下浮尘补足书房气息，和翻页、烫金同属一个空间。 */
+.wa-tea{position:absolute;left:calc(50% + var(--wa-w)*1.35);top:calc(50% + var(--wa-h)/2 - 2.6rem);width:3.2rem;height:3.5rem;opacity:0;animation:bs-in .5s 3.35s forwards}
+.wa-cup{position:absolute;left:.25rem;bottom:0;width:2.4rem;height:1.5rem;border:1px solid var(--wa-gold);border-radius:.2rem .2rem 1rem 1rem;background:color-mix(in srgb,var(--background) 80%,var(--wa-gold))}
+.wa-cup::after{content:"";position:absolute;left:100%;top:.25rem;width:.75rem;height:.75rem;border:1px solid var(--wa-gold);border-left:0;border-radius:0 50% 50% 0}
+.wa-steam{position:absolute;left:1rem;top:0;width:.6rem;height:1.2rem;border-left:1px solid color-mix(in srgb,var(--wa-gold) 65%,transparent);border-radius:50%;animation:wa-steam 2.4s 3.5s ease-in-out infinite}
+.wa-steam-b{left:1.7rem;animation-delay:4.1s}
+.wa-dust i{position:absolute;left:calc(40% + var(--i)*4%);top:calc(30% + var(--i)*5%);width:2px;height:2px;border-radius:50%;background:var(--wa-gold);opacity:0;animation:wa-dust 5s calc(3.2s + var(--i)*.3s) ease-in-out infinite}
+@keyframes wa-steam{0%{opacity:0;transform:translateY(.4rem) scaleX(.8)}45%{opacity:.65}100%{opacity:0;transform:translateY(-1rem) translateX(.4rem) scaleX(1.3)}}@keyframes wa-dust{0%,100%{opacity:0;transform:translate(0,1rem)}45%{opacity:.55;transform:translate(.8rem,-1rem)}}
+
+/* 可爱：猫爪旁真的画出一条歪歪扭扭的故事线，再撒开少量纸屑。 */
+.cu-scribble{position:absolute;left:50%;top:57%;width:7.5rem;height:2.3rem;transform:translateX(-50%) rotate(-3deg);overflow:visible}
+.cu-scribble path{fill:none;stroke:var(--color-accent);stroke-width:2;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:bs-draw .9s 3.15s ease forwards}
+.cu-confetti{position:absolute;inset:-3rem;pointer-events:none}.cu-confetti i{position:absolute;left:calc(20% + var(--i)*12%);top:12%;width:.35rem;height:.65rem;border-radius:2px;background:var(--decor);opacity:0;animation:cu-confetti 1.4s calc(3.45s + var(--i)*.07s) ease-out forwards}
+.cu-confetti i:nth-child(2n){background:var(--decor-2);transform:rotate(45deg)}
+@keyframes cu-confetti{0%{opacity:0;transform:translateY(1rem) rotate(0) scale(.4)}35%{opacity:.9}100%{opacity:0;transform:translateY(7rem) rotate(220deg) scale(1)}}
+
+/* 休闲：散落的草稿纸被纸飞机带起，铅笔补完最后一笔，保持手绘感。 */
+.ca-scraps i{position:absolute;left:calc(12% + var(--i)*34%);top:calc(62% + var(--i)*4%);width:3rem;height:3.8rem;border:1px solid color-mix(in srgb,var(--foreground) 22%,transparent);border-radius:2px;background:color-mix(in srgb,var(--color-surface) 75%,transparent);opacity:0;transform:translateY(2rem) rotate(calc((var(--i) - 1)*12deg));animation:ca-scrap .8s calc(3s + var(--i)*.16s) cubic-bezier(.2,.8,.2,1) forwards}
+.ca-scraps b{display:block;width:65%;height:1px;margin:.65rem auto -0.35rem;background:color-mix(in srgb,var(--foreground) 18%,transparent)}
+.ca-pencil{position:absolute;left:50%;top:62%;width:5rem;height:.55rem;border-radius:3px;background:var(--decor);opacity:0;transform:translate(-8rem,2rem) rotate(-14deg);animation:ca-pencil 1s 3.45s ease forwards}
+.ca-pencil::after{content:"";position:absolute;right:100%;border-top:.28rem solid transparent;border-bottom:.28rem solid transparent;border-right:.8rem solid var(--decor-2)}
+.ca-pencil b{position:absolute;right:-.15rem;top:.15rem;width:.35rem;height:.25rem;background:var(--foreground);border-radius:50%}
+@keyframes ca-scrap{to{opacity:.8;transform:translateY(0) rotate(calc((var(--i) - 1)*7deg))}}@keyframes ca-pencil{0%{opacity:0}25%{opacity:1}100%{opacity:1;transform:translate(2rem,-1rem) rotate(8deg)}}
+
+/* 阳光：花茎之后展开第二层草叶与蒲公英，日出最终变成充满生机的书页。 */
+.su-seeds i{position:absolute;left:calc(15% + var(--i)*13%);top:calc(30% + var(--i)*5%);width:3px;height:3px;border-radius:50%;background:var(--foreground);opacity:0;animation:su-seed 5s calc(3s + var(--i)*.3s) linear infinite}
+.su-seeds i::after{content:"";position:absolute;left:-3px;top:-3px;width:9px;height:9px;border:1px dotted color-mix(in srgb,var(--foreground) 50%,transparent);border-radius:50%}
+.su-field{position:absolute;left:0;right:0;bottom:0;height:17%;overflow:hidden;opacity:0;animation:bs-in .7s 3.25s forwards}
+.su-field i{position:absolute;left:calc(8% + var(--i)*20%);bottom:-1rem;width:5rem;height:5rem;border-radius:50% 50% 0 0;background:color-mix(in srgb,var(--decor) 18%,transparent);transform:scaleY(0);transform-origin:50% 100%;animation:su-field 1s calc(3.35s + var(--i)*.1s) ease forwards}
+@keyframes su-seed{0%{opacity:0;transform:translate(0,2rem)}20%{opacity:.5}100%{opacity:0;transform:translate(8rem,-8rem)}}@keyframes su-field{to{transform:scaleY(1)}}
+
+/* 治愈：花瓣顺着涟漪滑开，一道柔光扫过书名倒影。 */
+.he-petals i{position:absolute;left:calc(43% + var(--i)*5%);top:calc(var(--he-y) + var(--i)*.4rem);width:.8rem;height:.45rem;border-radius:100% 0 100% 0;background:color-mix(in srgb,var(--decor-2) 65%,var(--color-surface));opacity:0;animation:he-petal 3.8s calc(3s + var(--i)*.25s) ease-in-out infinite}
+.he-shine{position:absolute;left:50%;top:calc(var(--he-y) + 4rem);width:12rem;height:1px;margin-left:-6rem;background:linear-gradient(90deg,transparent,var(--decor-2),transparent);opacity:0;transform:scaleX(.1);animation:he-shine 1.6s 3.1s ease forwards}
+@keyframes he-petal{0%{opacity:0;transform:translate(0,0) rotate(0)}25%{opacity:.65}100%{opacity:0;transform:translate(calc((var(--i) - 1.5)*2rem),1rem) rotate(160deg)}}@keyframes he-shine{0%{opacity:0;transform:scaleX(.1)}45%{opacity:.65}100%{opacity:0;transform:scaleX(1.3)}}
+
+/* 水墨：一笔飞白穿过题款下方，墨滴随后晕开，强化“落笔成章”。 */
+.in-brush{position:absolute;left:50%;top:69%;width:min(19rem,55vw);height:3.2rem;transform:translateX(-50%) rotate(-3deg);overflow:visible;opacity:.5}
+.in-brush path{fill:none;stroke:var(--foreground);stroke-width:3;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:bs-draw 1.25s 3.05s cubic-bezier(.3,.7,.3,1) forwards}
+.in-ink-drops i{position:absolute;left:calc(48% + var(--i)*3%);top:calc(70% + var(--i)*.6rem);width:calc(3px + var(--i)*2px);height:calc(3px + var(--i)*2px);border-radius:50%;background:var(--foreground);opacity:0;animation:in-drop 1.2s calc(3.8s + var(--i)*.12s) ease-out forwards}
+@keyframes in-drop{0%{opacity:.5;transform:scale(.2)}60%{opacity:.25;transform:scale(2.2)}100%{opacity:0;transform:scale(3)}}
+
+/* 复古：页边批注像刚写下的编辑笔记，和打字机、稿纸保持同一时代语言。 */
+.re-marginalia{position:absolute;right:8%;top:24%;display:flex;align-items:center;gap:.6rem;color:color-mix(in srgb,var(--foreground) 55%,transparent);font:italic .72rem/1.2 var(--app-font-sans);letter-spacing:.08em;opacity:0;transform:rotate(-4deg);animation:re-note .8s 3.2s ease forwards}
+.re-marginalia i{width:2.5rem;height:1px;background:currentColor;transform:scaleX(0);animation:bs-rise .5s 3.55s ease forwards}
+@keyframes re-note{0%{opacity:0;transform:translateX(1rem) rotate(-4deg)}100%{opacity:1;transform:translateX(0) rotate(-4deg)}}
+
+/* 极简：三张纸依次对齐，折角最后翻开，加载完成就是“稿件整理完成”。 */
+.mn-pages{position:absolute;left:50%;top:50%;width:min(25rem,72vw);height:12rem;transform:translate(-50%,-50%);z-index:0;pointer-events:none}
+.mn-pages i{position:absolute;inset:0;border:1px solid color-mix(in srgb,var(--foreground) 10%,transparent);background:color-mix(in srgb,var(--color-surface) 45%,transparent);opacity:0;transform:translate(calc((var(--i) - 1)*1.4rem),calc((var(--i) - 1)*.8rem)) rotate(calc((var(--i) - 1)*3deg));animation:mn-page .7s calc(3s + var(--i)*.18s) ease forwards}
+.mn-box{z-index:1}.mn-fold{position:absolute;left:calc(50% + min(12.5rem,36vw) - 1.2rem);top:calc(50% - 6rem);width:1.2rem;height:1.2rem;background:linear-gradient(225deg,var(--background) 50%,color-mix(in srgb,var(--foreground) 16%,transparent) 51%);clip-path:polygon(0 0,100% 100%,0 100%);transform:scale(0);transform-origin:100% 0;animation:mn-dogear .45s 3.8s ease forwards}
+@keyframes mn-page{to{opacity:1;transform:translate(calc((var(--i) - 1)*.25rem),calc((var(--i) - 1)*.25rem)) rotate(0)}}@keyframes mn-dogear{to{transform:scale(1)}}
+
+@media (max-width:640px){.te-constellation{top:14%}.wa-tea{display:none}.re-marginalia{right:4%;top:18%}.ca-scraps i{width:2.2rem;height:3rem}.fo-vine-l{right:calc(50% + 5rem)}.fo-vine-r{left:calc(50% + 5rem)}}

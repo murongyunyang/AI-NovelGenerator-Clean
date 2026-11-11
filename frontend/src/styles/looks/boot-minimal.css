@@ -1,0 +1,32 @@
+/* 极简：一张印刷样张。三段。
+   1. 四角落下裁切线（0–0.5 秒）；
+   2. 一条细线从左往右画过去，蓝色方块跟着线头走，停在线尾；
+   3. 书名一个字一个字出现在线上（偏左，不居中），线下一行小字，右边三道刻度依次落下。
+   退场：上下两半向那条线合拢，露出界面。 */
+[data-scene="minimal"] { background: var(--background); }
+.mn-crop { position: absolute; width: 1.4rem; height: 1.4rem; border: 0 solid color-mix(in srgb, var(--foreground) 55%, transparent); opacity: 0; animation: mn-crop 0.4s cubic-bezier(.2,.8,.2,1) forwards; }
+.mn-tl { left: 1.6rem; top: 1.6rem; border-top-width: 1px; border-left-width: 1px; --mn-from: translate(-6px, -6px); animation-delay: 0.1s; }
+.mn-tr { right: 1.6rem; top: 1.6rem; border-top-width: 1px; border-right-width: 1px; --mn-from: translate(6px, -6px); animation-delay: 0.16s; }
+.mn-bl { left: 1.6rem; bottom: 1.6rem; border-bottom-width: 1px; border-left-width: 1px; --mn-from: translate(-6px, 6px); animation-delay: 0.22s; }
+.mn-br { right: 1.6rem; bottom: 1.6rem; border-bottom-width: 1px; border-right-width: 1px; --mn-from: translate(6px, 6px); animation-delay: 0.28s; }
+@keyframes mn-crop { from { opacity: 0; transform: var(--mn-from); } to { opacity: 1; transform: none; } }
+
+/* 盒子：书名 + 线 + 线下一行；整体上移到让那条线正好在屏幕中线（退场时上下两半向它合拢） */
+.mn-box { position: absolute; left: 50%; top: 50%; width: min(30rem, 84vw); transform: translate(-50%, calc(-100% + 2.5rem)); }
+.mn-title { display: block; padding-bottom: 0.9rem; font-size: clamp(1.3rem, 3vw, 1.7rem); font-weight: 300; letter-spacing: 0.4em; color: var(--foreground); }
+[data-lang="en"] .mn-title { letter-spacing: 0.14em; }
+.mn-title .bs-ch { opacity: 0; animation: bs-in 0.4s calc(1.55s + var(--i) * 0.07s) ease forwards; }
+[data-lang="en"] .mn-title .bs-ch { animation-delay: calc(1.55s + var(--i) * 0.03s); }
+/* 2. 细线和跟着线头走的蓝色方块 */
+.mn-line { height: 1px; background: var(--foreground); transform: scaleX(0); transform-origin: 0 50%; animation: bs-rise 1s 0.5s cubic-bezier(.7,0,.2,1) forwards; }
+.mn-dot { position: absolute; left: 0; top: calc(100% - 2.5rem - 1px); width: 9px; height: 9px; margin-top: -4px; background: var(--decor); opacity: 0; animation: bs-in 0.15s 0.45s forwards, mn-run 1s 0.5s cubic-bezier(.7,0,.2,1) forwards; }
+@keyframes mn-run { to { left: calc(100% - 9px); } }
+/* 3. 线下一行小字、三道刻度 */
+.mn-foot { display: flex; align-items: flex-start; justify-content: space-between; height: 2.5rem; padding-top: 0.7rem; }
+.mn-tag { font-size: 0.72rem; letter-spacing: 0.24em; color: var(--color-muted); opacity: 0; animation: bs-in 0.5s 2.25s ease forwards; }
+.mn-ticks { display: flex; gap: 6px; }
+.mn-ticks i { width: 1px; height: 0.7rem; background: color-mix(in srgb, var(--foreground) 60%, transparent); transform: scaleY(0); transform-origin: 50% 0; animation: bs-rise 0.25s calc(2.4s + var(--i) * 0.08s) ease-out forwards; }
+
+@property --mn-fold { syntax: "<percentage>"; inherits: false; initial-value: 0%; }
+:root[data-look="minimal"] .boot-screen[data-phase="leaving"] { clip-path: inset(var(--mn-fold) 0 var(--mn-fold) 0); animation: mn-fold 0.7s cubic-bezier(.7,0,.3,1) forwards; }
+@keyframes mn-fold { to { --mn-fold: 50%; } }
